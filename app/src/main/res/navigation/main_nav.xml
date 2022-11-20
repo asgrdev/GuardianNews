@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav"
+    app:startDestination="@id/homePageFragment">
+
+    <fragment
+        android:id="@+id/homePageFragment"
+        android:name="org.asghari.guardiannews.presentation.fragments.HomePageFragment"
+        android:label="HomePageFragment"
+        tools:layout="@layout/home_page_fragment">
+        <action
+            android:id="@+id/action_homePageFragment_to_newsDetailesPageFragment"
+            app:destination="@id/newsDetailesPageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newsDetailesPageFragment"
+        android:name="org.asghari.guardiannews.presentation.fragments.NewsDetailesPageFragment"
+        android:label="NewsDetailesPageFragment" />
+</navigation>

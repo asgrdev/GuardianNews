@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="News"
+            type="org.asghari.guardiannews.data.models.NewsList" />
+    </data>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:background="#fcfcfc"
+    android:layout_width="match_parent"
+    android:layout_margin="3dp"
+    android:padding="10dp"
+    android:layout_height="wrap_content">
+<ImageView
+    android:id="@+id/news_thumb"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintLeft_toLeftOf="parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:src="@color/black"
+    />
+    <TextView
+        android:id="@+id/news_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/news_thumb"
+        app:layout_constraintLeft_toLeftOf="@id/news_thumb"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:textSize="16dp"
+        android:textColor="#333"
+        android:text="@string/test_news_title"
+        />
+
+    <TextView
+        android:id="@+id/news_publish_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/news_title"
+        app:layout_constraintRight_toRightOf="@id/news_thumb"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="2dp"
+        android:textSize="13dp"
+        android:text="@string/test_news_title"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
