@@ -12,12 +12,11 @@ interface GuardianNewsRepository {
                              showFields:String): NewsList
 
 
-    suspend fun getNewsListBYQuery( query:String?,
+    suspend fun getNewsListBYQuery( query:String,
                                     page:Int,
-                                    showFields:String): Flow<PagingData<Result>>
-
+                                    showFields:String): NewsList
 
     suspend fun getLastNewsList(  page:Int,
-                                  showFields:String): Flow<PagingData<Result>>
+                                  showFields:String): NewsList
 
 }

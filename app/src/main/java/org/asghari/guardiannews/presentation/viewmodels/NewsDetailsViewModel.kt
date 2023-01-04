@@ -27,12 +27,11 @@ class NewsDetailsViewModel @Inject constructor(
             newsDetailsUseCase.call(newsId, onResult = object:UseCaseCallback<NewsList>{
                 override fun onError(errorModel: ErrorModel?) {
                     _newsDetails.value = NewsListState(isLoading = false,
-                        errorModel?.message!! ,null, null)
+                        errorModel?.message!! ,null)
                 }
 
                 override fun onSuccess(result: NewsList) {
-                    _newsDetails.value = NewsListState(isLoading = false,"",
-                        null, result.response.results.get(0)!!)
+                    _newsDetails.value = NewsListState(isLoading = false,"", result)
                 }
             })
         }

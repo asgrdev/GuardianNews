@@ -18,7 +18,6 @@ class NewsPagingSource @Inject constructor(
 ): PagingSource<Int, Result>() {
     private lateinit var newsList: NewsList
 
-
     override fun getRefreshKey(state: PagingState<Int, Result>): Int? {
         return state.anchorPosition?.let{
                 anchorPosition ->

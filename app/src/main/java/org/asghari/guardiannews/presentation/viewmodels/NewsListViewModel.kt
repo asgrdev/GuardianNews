@@ -38,11 +38,11 @@ class NewsListViewModel @Inject constructor
         Log.d("5bbb>>>>>>>>>>>>",">>>>>>>>>>>>>>>>>>>>>>>>>>>>ss".toString())
         viewModelScope.launch {
             _newsList.value = NewsListState(isLoading = true,"",null)
-            lastNewsListUseCase.Call().cachedIn(viewModelScope).collectLatest {
+            var call =  lastNewsListUseCase.Call();
+            call?.let{
 
                 if(it==null){
                     _newsList.value = NewsListState(isLoading = false,"Error!!",null)
-
                 }
                 else {
                     _newsList.value = NewsListState(isLoading = false, error = "", it)

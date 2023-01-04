@@ -50,10 +50,10 @@ class NewsDetailesPageFragment: Fragment() {
             }
             else{
                 binding?.apply{
-                    Glide.with(root).load(it.data?.fields?.thumbnail)
+                    Glide.with(root).load(it.data?.response?.results?.get(0)?.fields?.thumbnail)
     .into(newsThumb)
-                    newsTitle.text = it.data?.fields?.bodyText
-                    newsPublishDate.text = it.data?.webPublicationDate
+                    newsTitle.text = it.data?.response?.results?.get(0)?.fields?.bodyText
+                    newsPublishDate.text = it.data?.response?.results?.get(0)?.webPublicationDate
                 }
             }
         })

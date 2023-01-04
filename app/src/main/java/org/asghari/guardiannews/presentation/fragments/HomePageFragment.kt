@@ -85,11 +85,11 @@ class HomePageFragment:Fragment(),NewsListAdapter.ItemClickListener {
             }
             else {
                 lifecycleScope.launch {
-                    it.pagingData?.let {
+                    /*it.pagingData?.let {
                         newsListAdapter.submitData(
                             pagingData = it
                         )
-                    }
+                    }*/
                 }
                 Log.d("88884>>>>>>>>>>>>", it.data.toString())
             }

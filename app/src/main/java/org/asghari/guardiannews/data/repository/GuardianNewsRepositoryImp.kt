@@ -36,24 +36,14 @@ private val remoteDataSource: RemoteDataSource)
     }
 
     override suspend fun getNewsListBYQuery(
-        query: String?,
+        query: String,
         page: Int,
         showFields: String
-    ) : Flow<PagingData<Result>> {
-        return Pager(
-            config = PagingConfig(enablePlaceholders = false, pageSize = 10),
-            pagingSourceFactory = {
-                NewsPagingSource(guardianNewsApiService,query)
-            }
-        ).flow
+    ) : NewsList {
+        return remoteDataSource.getNewsListBYQuery(page,query,showFields)
     }
 
-    override suspend fun getLastNewsList(page: Int, showFields: String): Flow<PagingData<Result>> {
-        return Pager(
-             config = PagingConfig(enablePlaceholders = false, pageSize = 10),
-             pagingSourceFactory = {
-                 NewsPagingSource(guardianNewsApiService,"")
-             }
-         ).flow
+    override suspend fun getLastNewsList(page: Int, showFields: String): NewsList {
+        return remoteDataSource.getLastNewsList(page,showFields)
     }
 }
