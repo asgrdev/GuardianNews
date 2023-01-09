@@ -60,7 +60,7 @@ class HomePageFragment:Fragment(),NewsListAdapter.ItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.d("4ff>>>>>>>>>>>>",">>>>>>>>>>>>>>>>>>>>>>>>>>>>ss".toString())
+
         lifecycleScope.launch {
             //repeatOnLifecycle(Lifecycle.State.STARTED) {
                 newsListAdapter.loadStateFlow.collect {
@@ -74,7 +74,7 @@ class HomePageFragment:Fragment(),NewsListAdapter.ItemClickListener {
                 }
           //  }
         }
-        _viewModel.newsList.observe(viewLifecycleOwner,{
+        /*_viewModel.newsList.observe(viewLifecycleOwner,{
             if(it.isLoading)
             {
                 Toast.makeText(context,"Data is loading!!",Toast.LENGTH_LONG).show()
@@ -93,7 +93,7 @@ class HomePageFragment:Fragment(),NewsListAdapter.ItemClickListener {
                 }
                 Log.d("88884>>>>>>>>>>>>", it.data.toString())
             }
-        })
+        })*/
 
 
     }

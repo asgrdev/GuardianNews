@@ -39,8 +39,8 @@ class NewsDetailesPageFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _DetailViewModel.newsDetails.observe(viewLifecycleOwner,{
-            if(it.isLoading)
+      /*  _DetailViewModel.newsDetails.observe(viewLifecycleOwner,{
+          /*  if(it.isLoading)
             {
                 Toast.makeText(context,"Data is loading!!", Toast.LENGTH_LONG).show()
             }
@@ -55,7 +55,7 @@ class NewsDetailesPageFragment: Fragment() {
                     newsTitle.text = it.data?.response?.results?.get(0)?.fields?.bodyText
                     newsPublishDate.text = it.data?.response?.results?.get(0)?.webPublicationDate
                 }
-            }
-        })
+            }*/
+        })*/
     }
 }

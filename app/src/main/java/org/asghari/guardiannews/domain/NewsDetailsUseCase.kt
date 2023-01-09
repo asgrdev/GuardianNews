@@ -10,5 +10,5 @@ class NewsDetailsUseCase  @Inject constructor(
     errorHandler: IErrorHandler
     ):UseCase<NewsList,String>(errorHandler) {
     override suspend fun run(newsId: String?): NewsList =
-        guardianNewsRepository.getNewsById(newsId!!,"bodyText,thumbnail")
+        guardianNewsRepository.getNewsById(newsId!!,"body,byline,bylineHtml,bodyText,thumbnail")
 }
