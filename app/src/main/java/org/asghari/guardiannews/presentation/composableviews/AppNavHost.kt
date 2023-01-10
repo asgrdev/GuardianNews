@@ -9,7 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import androidx.navigation.ui.NavigationUI
+import org.asghari.guardiannews.other.ScreensRoute
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -20,16 +20,16 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination =   "HomePage"
+        startDestination =  ScreensRoute.HomePage().route
     ) {
-        composable("HomePage") {
+        composable(ScreensRoute.HomePage().route) {
           HomePageScreen {
               val encodedUrl = URLEncoder.encode(it, StandardCharsets.UTF_8.toString())
-              navController.navigate("newspage/$encodedUrl")
+              navController.navigate( "${ScreensRoute.NewsScreen().route}/$encodedUrl")
           }
         }
 
-        composable("newspage/{newsId}",
+        composable("${ScreensRoute.NewsScreen().route}/{newsId}",
         arguments = listOf(navArgument(name = "newsId"){})
         )
         {
