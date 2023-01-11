@@ -27,7 +27,7 @@ class NewsListViewModel @Inject constructor
 
     private val _newsList :  MutableStateFlow<NewsListState>  = MutableStateFlow(NewsListState.Loading)
     val newsList = mutableStateOf<NewsListState>(NewsListState.Loading)
-
+    var current_page:Int = 1
     init {
         getNewsList()
     }
@@ -44,6 +44,28 @@ class NewsListViewModel @Inject constructor
                 else {
                     _newsList.value = NewsListState.Success("",it)
 
+                }
+                newsList.value = _newsList.value
+
+            }
+
+        }
+
+    }
+
+    fun LoadMore(page:Int=1){
+        current_page++
+        Log.d(">>","Show"+current_page)
+        CoroutineScope(Dispatchers.IO).launch {
+            _newsList.value = NewsListState.Loading
+            var call =  lastNewsListUseCase.Call(current_page);
+            call?.let{
+
+                if(it==null){
+                    _newsList.value = NewsListState.Error("Error!!",null)
+                }
+                else {
+                    _newsList.value = NewsListState.Success("",it)
                 }
                 newsList.value = _newsList.value
 

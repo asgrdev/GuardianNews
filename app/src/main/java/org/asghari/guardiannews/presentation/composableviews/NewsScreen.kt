@@ -11,6 +11,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -21,7 +22,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.airbnb.lottie.utils.Utils
 import de.charlex.compose.HtmlText
+import org.asghari.guardiannews.other.Loading
 import org.asghari.guardiannews.other.NewsListState
 import org.asghari.guardiannews.presentation.viewmodels.NewsDetailsViewModel
 import org.asghari.guardiannews.presentation.viewmodels.NewsListViewModel
@@ -38,7 +41,14 @@ fun NewsScreen(name: String?,navController: NavController) {
 
     when (dataState) {
         is NewsListState.Loading -> {
-            Text(text = "Loading")
+
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Loading()
+            }
         }
         is NewsListState.Error -> {
             Text(text = "Error>" + dataState.message)
