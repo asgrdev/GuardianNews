@@ -30,3 +30,20 @@ fun Loading() {
         LottieAnimation(lottieComposition, alignment = Alignment.Center)
     }
 }
+
+@Composable
+fun LoadMoreLoading() {
+    val lottieComposition by rememberLottieComposition(spec = LottieCompositionSpec
+        .RawRes(R.raw.root_load))
+    val lottieAnimationState by animateLottieCompositionAsState(composition = lottieComposition, iterations = LottieConstants.IterateForever)
+
+    Column(
+        modifier = Modifier
+            .size(50.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+
+        LottieAnimation(lottieComposition, alignment = Alignment.Center)
+    }
+}

@@ -19,8 +19,8 @@ class NewsDetailsViewModel @Inject constructor(
     private val newsDetailsUseCase: NewsDetailsUseCase
 ) : ViewModel(){
 
-    private val _newsDetails : MutableStateFlow<NewsListState> = MutableStateFlow(NewsListState.Loading)
-    val  newsDetails = mutableStateOf<NewsListState>(NewsListState.Loading)
+    private val _newsDetails : MutableStateFlow<NewsListState> = MutableStateFlow(NewsListState.Loading("",null))
+    val  newsDetails = mutableStateOf<NewsListState>(NewsListState.Loading("",null))
 
     fun getNewsDetails(newsId:String,newsFields:String)
     {

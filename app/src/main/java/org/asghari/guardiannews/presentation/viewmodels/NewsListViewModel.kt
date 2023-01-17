@@ -15,9 +15,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.asghari.guardiannews.data.local.NewsDao
+import org.asghari.guardiannews.data.models.NewsList
+import org.asghari.guardiannews.data.models.Response
 import org.asghari.guardiannews.domain.LastNewsListUseCase
 import org.asghari.guardiannews.other.NewsListState
 import org.asghari.guardiannews.presentation.adapters.NewsListAdapter
+import retrofit2.HttpException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,27 +28,34 @@ class NewsListViewModel @Inject constructor
     (private val lastNewsListUseCase: LastNewsListUseCase):
     ViewModel() {
 
-    private val _newsList :  MutableStateFlow<NewsListState>  = MutableStateFlow(NewsListState.Loading)
-    val newsList = mutableStateOf<NewsListState>(NewsListState.Loading)
+    private val _newsList: MutableSharedFlow<NewsListState> = MutableStateFlow(NewsListState.Loading("",null))
+    val newsList = mutableStateOf<NewsListState>(NewsListState.Loading("",null))
+
+
+    lateinit var tmpNewsList:NewsList
     var current_page:Int = 1
     init {
         getNewsList()
     }
-    private fun getNewsList(){
+
+    private fun getNewsList() {
 
         CoroutineScope(Dispatchers.IO).launch {
-            _newsList.value = NewsListState.Loading
-            var call =  lastNewsListUseCase.Call();
-            call?.let{
+            _newsList.emit(NewsListState.Loading("",null))
+            var call = lastNewsListUseCase.Call()
 
-                if(it==null){
-                    _newsList.value = NewsListState.Error("Error!!",null)
-                }
-                else {
-                    _newsList.value = NewsListState.Success("",it)
+            call?.let {
+                if (it == null) {
+                    tmpNewsList = it
+                    _newsList.emit(NewsListState.Error("Error!!", null))
+                } else {
+                    tmpNewsList = it
+                    _newsList.emit(NewsListState.Success("", it))
 
                 }
-                newsList.value = _newsList.value
+              _newsList.collectLatest {
+                newsList.value = it
+            }
 
             }
 
@@ -53,24 +63,25 @@ class NewsListViewModel @Inject constructor
 
     }
 
-    fun LoadMore(page:Int=1){
+    fun LoadMore(page: Int = 1) {
         current_page++
-        Log.d(">>","Show"+current_page)
-        CoroutineScope(Dispatchers.IO).launch {
-            _newsList.value = NewsListState.Loading
-            var call =  lastNewsListUseCase.Call(current_page);
-            call?.let{
+        Log.d("Loa", "Show" + current_page)
+        viewModelScope.launch {
+            _newsList.emit(NewsListState.Loading("",tmpNewsList))
+            var call = lastNewsListUseCase.Call(current_page);
+            call?.let {
 
-                if(it==null){
-                    _newsList.value = NewsListState.Error("Error!!",null)
+                try {
+                    tmpNewsList.response.results += it.response.results
+                    _newsList.emit(NewsListState.Success("", tmpNewsList))
                 }
-                else {
-                    _newsList.value = NewsListState.Success("",it)
+                catch (e:HttpException){
+                    _newsList.emit(NewsListState.Error("Error!!", null))
                 }
-                newsList.value = _newsList.value
-
             }
-
+            _newsList.collectLatest {
+                newsList.value = it
+            }
         }
 
     }

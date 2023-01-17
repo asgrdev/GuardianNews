@@ -14,7 +14,7 @@ data class Response(
     @SerializedName("pages")
     val pages: Int,
     @SerializedName("results")
-    val results: List<Result>,
+    var results: List<Result>,
     @SerializedName("startIndex")
     val startIndex: Int,
     @SerializedName("status")
