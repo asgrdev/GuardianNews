@@ -38,9 +38,9 @@ class NewsListViewModel @Inject constructor
         getNewsList()
     }
 
-    private fun getNewsList() {
-
-        CoroutineScope(Dispatchers.IO).launch {
+     fun getNewsList() {
+         current_page = 1
+         viewModelScope.launch {
             _newsList.emit(NewsListState.Loading("",null))
             var call = lastNewsListUseCase.Call()
 

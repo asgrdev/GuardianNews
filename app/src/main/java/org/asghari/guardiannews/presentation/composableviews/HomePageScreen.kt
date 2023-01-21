@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.os.HandlerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -34,6 +35,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import org.asghari.guardiannews.other.NewsListState
 import org.asghari.guardiannews.data.models.Result
 import org.asghari.guardiannews.other.LoadMoreLoading
@@ -64,142 +67,153 @@ fun LazyListState.OnBottomReached(buffer : Int = 0,
 fun HomePageScreen(onNavigation:(newsId:String?) -> Unit) {
 
     val _newsListViewModel: NewsListViewModel = hiltViewModel()
-    var dataState: NewsListState =   _newsListViewModel.newsList.value
-
+    var dataState: NewsListState = _newsListViewModel.newsList.value
+    val swipeRefreshState = rememberSwipeRefreshState(true)
     Log.d("Loading", dataState.javaClass.name)
-         Box(modifier = Modifier
-             .background(Color.White)
-             .padding(0.dp)
-             .fillMaxSize()
-            , contentAlignment = Alignment.Center
-        ) {
-             val listState = rememberLazyListState()
-             listState.OnBottomReached(buffer = 1) {
-                 // do on load more
-                 Log.d(
-                     "Loading3",
-                     listState.firstVisibleItemIndex.toString() + ">>>" + dataState.javaClass.name
-                 )
+    Box(
+        modifier = Modifier
+            .background(Color.White)
+            .padding(0.dp)
+            .fillMaxSize(), contentAlignment = Alignment.Center
+    ) {
+        val listState = rememberLazyListState()
+        listState.OnBottomReached(buffer = 1) {
+            // do on load more
+            Log.d(
+                "Loading3",
+                listState.firstVisibleItemIndex.toString() + ">>>" + dataState.javaClass.name
+            )
 
-                 _newsListViewModel.LoadMore()
-             }
-             LazyColumn(
-                 modifier = Modifier
-                     .wrapContentHeight()
-                     .fillMaxWidth()
-                     .padding(4.dp)
-                     .background(Color(0xfffafafa)),
-                 verticalArrangement = Arrangement.Bottom,
-                 horizontalAlignment = Alignment.End,
-                 state = listState
-             ) {
+            _newsListViewModel.LoadMore()
+        }
 
-                 when (dataState) {
-                     is NewsListState.Loading -> {
+        SwipeRefresh(
+            state = swipeRefreshState ,
+            onRefresh = { _newsListViewModel.getNewsList()
+                        swipeRefreshState.isRefreshing = true
+                        },
 
-                         dataState?.data?.response?.results?.let { list ->
-                             items(list) {
+        )
+        {
 
-                                 Column(
-                                     modifier = Modifier.clickable(onClick = {
+            LazyColumn(
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .fillMaxWidth()
+                    .padding(4.dp)
+                    .background(Color(0xfffafafa)),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.End,
+                state = listState
+            ) {
 
-                                         onNavigation(it.id)
-                                     })
-                                 ) {
-                                     Image(
-                                         painter = rememberAsyncImagePainter(
-                                             ImageRequest.Builder(LocalContext.current)
-                                                 .data(data = it.fields.thumbnail)
-                                                 .allowHardware(false)
-                                                 .build()
-                                         ),
-                                         contentDescription = it.webTitle,
-                                         modifier = Modifier
-                                             .background(Color.LightGray)
-                                             .wrapContentSize()
-                                             .height(212.dp)
-                                             .fillMaxSize()
-                                     )
-                                     Text(
-                                         text = it.webTitle, color = Color.Gray,
-                                         modifier = Modifier.padding(horizontal = 10.dp),
-                                         style = MaterialTheme.typography.body2,
-                                         textAlign = TextAlign.Start
-                                     )
-                                     Text(
-                                         text = it.webPublicationDate, color = Color.Gray,
-                                         modifier = Modifier.padding(horizontal = 10.dp),
-                                         style = MaterialTheme.typography.caption,
-                                         textAlign = TextAlign.Start
-                                     )
+                when (dataState) {
+                    is NewsListState.Loading -> {
 
-                                     Spacer(
-                                         modifier = Modifier
-                                             .height(38.dp)
-                                             .background(color = Color.Blue)
-                                     )
-                                 }
-                             }
+                        dataState?.data?.response?.results?.let { list ->
+                            items(list) {
 
-                         }
+                                Column(
+                                    modifier = Modifier.clickable(onClick = {
 
-                         item { LoadMoreLoading() }
+                                        onNavigation(it.id)
+                                    })
+                                ) {
+                                    Image(
+                                        painter = rememberAsyncImagePainter(
+                                            ImageRequest.Builder(LocalContext.current)
+                                                .data(data = it.fields.thumbnail)
+                                                .allowHardware(false)
+                                                .build()
+                                        ),
+                                        contentDescription = it.webTitle,
+                                        modifier = Modifier
+                                            .background(Color.LightGray)
+                                            .wrapContentSize()
+                                            .height(212.dp)
+                                            .fillMaxSize()
+                                    )
+                                    Text(
+                                        text = it.webTitle, color = Color.Gray,
+                                        modifier = Modifier.padding(horizontal = 10.dp),
+                                        style = MaterialTheme.typography.body2,
+                                        textAlign = TextAlign.Start
+                                    )
+                                    Text(
+                                        text = it.webPublicationDate, color = Color.Gray,
+                                        modifier = Modifier.padding(horizontal = 10.dp),
+                                        style = MaterialTheme.typography.caption,
+                                        textAlign = TextAlign.Start
+                                    )
 
-                     }
-                     is NewsListState.Success -> {
+                                    Spacer(
+                                        modifier = Modifier
+                                            .height(38.dp)
+                                            .background(color = Color.Blue)
+                                    )
+                                }
+                            }
 
-                         dataState?.data?.response?.results?.let { list ->
+                        }
 
-                                 items(list) {
-                                     Column(
-                                         modifier = Modifier.clickable(onClick = {
+                        item { LoadMoreLoading() }
 
-                                             onNavigation(it.id)
-                                         })
-                                     ) {
-                                         Image(
-                                             painter = rememberAsyncImagePainter(
-                                                 ImageRequest.Builder(LocalContext.current)
-                                                     .data(data = it.fields.thumbnail)
-                                                     .allowHardware(false)
-                                                     .build()
-                                             ),
-                                             contentDescription = it.webTitle,
-                                             modifier = Modifier
-                                                 .background(Color.LightGray)
-                                                 .wrapContentSize()
-                                                 .height(212.dp)
-                                                 .fillMaxSize()
-                                         )
-                                         Text(
-                                             text = it.webTitle, color = Color.Gray,
-                                             modifier = Modifier.padding(horizontal = 10.dp),
-                                             style = MaterialTheme.typography.body2,
-                                             textAlign = TextAlign.Start
-                                         )
-                                         Text(
-                                             text = it.webPublicationDate, color = Color.Gray,
-                                             modifier = Modifier.padding(horizontal = 10.dp),
-                                             style = MaterialTheme.typography.caption,
-                                             textAlign = TextAlign.Start
-                                         )
+                    }
+                    is NewsListState.Success -> {
+                        swipeRefreshState.isRefreshing = false
+                        dataState?.data?.response?.results?.let { list ->
 
-                                         Spacer(
-                                             modifier = Modifier
-                                                 .height(38.dp)
-                                                 .background(color = Color.Blue)
-                                         )
-                                     }
-                                 }
+                            items(list) {
+                                Column(
+                                    modifier = Modifier.clickable(onClick = {
 
-                             }
+                                        onNavigation(it.id)
+                                    })
+                                ) {
+                                    Image(
+                                        painter = rememberAsyncImagePainter(
+                                            ImageRequest.Builder(LocalContext.current)
+                                                .data(data = it.fields.thumbnail)
+                                                .allowHardware(false)
+                                                .build()
+                                        ),
+                                        contentDescription = it.webTitle,
+                                        modifier = Modifier
+                                            .background(Color.LightGray)
+                                            .wrapContentSize()
+                                            .height(212.dp)
+                                            .fillMaxSize()
+                                    )
+                                    Text(
+                                        text = it.webTitle, color = Color.Gray,
+                                        modifier = Modifier.padding(horizontal = 10.dp),
+                                        style = MaterialTheme.typography.body2,
+                                        textAlign = TextAlign.Start
+                                    )
+                                    Text(
+                                        text = it.webPublicationDate, color = Color.Gray,
+                                        modifier = Modifier.padding(horizontal = 10.dp),
+                                        style = MaterialTheme.typography.caption,
+                                        textAlign = TextAlign.Start
+                                    )
 
-                     }
-                     is NewsListState.Error -> {
-                         Log.d("Error", "---")
-                     }
-                 }
-             }
+                                    Spacer(
+                                        modifier = Modifier
+                                            .height(38.dp)
+                                            .background(color = Color.Blue)
+                                    )
+                                }
+                            }
+
+                        }
+
+                    }
+                    is NewsListState.Error -> {
+                        Log.d("Error", "---")
+                    }
+                }
+            }
         }
     }
+}
 
