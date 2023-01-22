@@ -39,7 +39,7 @@ fun LoadMoreLoading() {
 
     Column(
         modifier = Modifier
-            .size(50.dp),
+            .size(150.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {

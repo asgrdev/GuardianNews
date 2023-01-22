@@ -42,7 +42,7 @@ class NewsListViewModel @Inject constructor
          current_page = 1
          viewModelScope.launch {
             _newsList.emit(NewsListState.Loading("",null))
-            var call = lastNewsListUseCase.Call()
+            var call = lastNewsListUseCase.run()
 
             call?.let {
                 if (it == null) {
@@ -63,12 +63,12 @@ class NewsListViewModel @Inject constructor
 
     }
 
-    fun LoadMore(page: Int = 1) {
+    fun LoadMore() {
         current_page++
         Log.d("Loa", "Show" + current_page)
         viewModelScope.launch {
             _newsList.emit(NewsListState.Loading("",tmpNewsList))
-            var call = lastNewsListUseCase.Call(current_page);
+            var call = lastNewsListUseCase.run(current_page);
             call?.let {
 
                 try {

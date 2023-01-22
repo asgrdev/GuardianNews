@@ -68,7 +68,7 @@ fun HomePageScreen(onNavigation:(newsId:String?) -> Unit) {
 
     val _newsListViewModel: NewsListViewModel = hiltViewModel()
     var dataState: NewsListState = _newsListViewModel.newsList.value
-    val swipeRefreshState = rememberSwipeRefreshState(true)
+    val swipeRefreshState = rememberSwipeRefreshState(false)
     Log.d("Loading", dataState.javaClass.name)
     Box(
         modifier = Modifier
@@ -88,11 +88,11 @@ fun HomePageScreen(onNavigation:(newsId:String?) -> Unit) {
         }
 
         SwipeRefresh(
-            state = swipeRefreshState ,
-            onRefresh = { _newsListViewModel.getNewsList()
-                        swipeRefreshState.isRefreshing = true
-                        },
-
+            state = swipeRefreshState,
+            onRefresh = {
+                _newsListViewModel.getNewsList()
+                swipeRefreshState.isRefreshing = true
+            },
         )
         {
 
@@ -155,8 +155,18 @@ fun HomePageScreen(onNavigation:(newsId:String?) -> Unit) {
                             }
 
                         }
+                        if (swipeRefreshState.isRefreshing == false) {
+                            item {
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    LoadMoreLoading()
+                                }
 
-                        item { LoadMoreLoading() }
+                            }
+                        }
 
                     }
                     is NewsListState.Success -> {
