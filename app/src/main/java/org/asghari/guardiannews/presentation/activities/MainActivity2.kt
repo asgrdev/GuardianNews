@@ -1,19 +1,24 @@
 package org.asghari.guardiannews.presentation.activities
 
+import android.annotation.SuppressLint
+import android.graphics.drawable.Icon
 import android.os.Bundle
+import android.os.Debug
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.*
+
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.material3.MaterialTheme
+
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,7 +26,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
-
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.materialIcon
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.DpOffset
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,26 +42,152 @@ import org.asghari.guardiannews.presentation.composableviews.HomePageScreen
 import org.asghari.guardiannews.presentation.ui.theme.GuardianNewsTheme
 import org.asghari.guardiannews.presentation.viewmodels.NewsListViewModel
 import java.security.AccessController.getContext
+ import androidx.compose.material.icons.filled.Menu  // ok
+import androidx.compose.material.icons.filled.Print
+import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.VerticalAlignmentLine
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.sp
+import okhttp3.internal.immutableListOf
+import org.asghari.guardiannews.R
+import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @AndroidEntryPoint
 class MainActivity2 : ComponentActivity() {
 
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
 
+            var dropDownMenuExpanded = remember { mutableStateOf(false) }
             val navController = rememberNavController()
-
+            var text = remember { mutableStateOf(TextFieldValue("")) }
+            var pagename = remember {
+                mutableStateOf(getResources().getString(R.string.app_name))
+            }
             GuardianNewsTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
+              Scaffold( topBar = {
+                  TopAppBar(
 
-                      AppNavHost(navController = navController)
+                      backgroundColor = Color.LightGray,
+                      title = {
+                          Text(text = pagename.value, style = TextStyle(color = Color.White))
+                      },
+                      actions = {
 
-                }
+
+                          // drop down menu
+                          DropdownMenu(
+                              expanded = dropDownMenuExpanded.value,
+                              onDismissRequest = {
+                                  dropDownMenuExpanded.value =  false
+                              },
+                              // play around with these values
+                              // to position the menu properly
+                              offset = DpOffset(x = -15.dp, y = (-50).dp)
+                          ) {
+                              // this is a column scope
+                              // items are added vertically
+
+                              DropdownMenuItem(onClick = {
+                                  Toast.makeText(
+                                      applicationContext,
+                                      "Refresh Click",
+                                      Toast.LENGTH_SHORT
+                                  )
+                                      .show()
+                                  dropDownMenuExpanded.value = false
+                              }) {
+                                  Text("Refresh")
+                              }
+
+                              DropdownMenuItem(onClick = {
+                                  Toast.makeText(
+                                      applicationContext,
+                                      "Settings Click",
+                                      Toast.LENGTH_SHORT
+                                  )
+                                      .show()
+                                  dropDownMenuExpanded.value = false
+                              }) {
+                                  Text("Settings")
+                              }
+
+                              DropdownMenuItem(onClick = {
+                                  Toast.makeText(
+                                      applicationContext,
+                                      "Send Feedback Click",
+                                      Toast.LENGTH_SHORT
+                                  )
+                                      .show()
+                                  dropDownMenuExpanded.value = false
+                              }) {
+                                  Text("Send Feedback")
+                              }
+                          }
+                              Box(modifier = Modifier
+                                  .padding(1.dp, 2.dp)
+                                  .height(45.dp)) {
+                                  TextField(value = text.value,  placeholder = {
+                                      Text(text = "Search", color = Color.White, style = androidx.compose.material.MaterialTheme.typography.caption,
+                                      ) }, onValueChange = {
+                                      text.value = it
+
+                                  }, enabled = true,
+                                      readOnly = false,
+
+                                      textStyle = TextStyle(color = Color.White,  fontSize = 12.sp), modifier = Modifier
+                                          .width(IntrinsicSize.Max)
+                                          .clip(RoundedCornerShape(50))
+                                          .border(
+                                              1.dp, Color(0x66ffffff),
+                                              shape = RoundedCornerShape(50)
+                                          )
+                                          .background(Color(0x44ffffff)).fillMaxWidth(),
+                                      trailingIcon = {
+                                          Icon(Icons.Outlined.Search, "")
+                                      }
+                                  )
+                              }
+                              IconButton(
+
+                                  content =
+                                  { Icon(Icons.Outlined.Menu,    contentDescription = "")}, onClick = {
+                                      dropDownMenuExpanded.value = !dropDownMenuExpanded.value
+                                  })
+
+                      }
+
+                  )
+              },
+              content =  {
+                  Column(
+                      modifier = Modifier
+                          .padding(it)){
+                      // A surface container using the 'background' color from the theme
+                      Surface(
+
+                          modifier = Modifier.fillMaxSize(),
+                          color = MaterialTheme.colorScheme.background,
+                      ) {
+                          AppNavHost(navController = navController)
+
+                      }
+                  }
+              }
+              )
+
 
             }
         }
