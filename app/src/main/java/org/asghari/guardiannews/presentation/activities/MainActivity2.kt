@@ -18,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,8 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.materialIcon
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.DpOffset
 import androidx.navigation.compose.NavHost
@@ -44,11 +43,11 @@ import org.asghari.guardiannews.presentation.viewmodels.NewsListViewModel
 import java.security.AccessController.getContext
  import androidx.compose.material.icons.filled.Menu  // ok
 import androidx.compose.material.icons.filled.Print
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
@@ -64,6 +63,60 @@ import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 
 @AndroidEntryPoint
 class MainActivity2 : ComponentActivity() {
+    @Composable
+    fun SearchView(state: MutableState<TextFieldValue>) {
+        TextField(
+            value = state.value,
+            onValueChange = { value ->
+                state.value = value
+            },
+
+            modifier = Modifier.padding(0.dp)
+                .clip(RoundedCornerShape(50))
+                .border(
+                    1.dp, Color(0x66ffffff),
+
+                )
+                .background(Color(0x44ffffff)),
+            textStyle = TextStyle(color = Color.DarkGray, fontSize = 16.sp),
+            leadingIcon = {
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = "",
+
+                )
+            },
+            trailingIcon = {
+                if (state.value != TextFieldValue("")) {
+                    IconButton(
+                        onClick = {
+                            state.value =
+                                TextFieldValue("") // Remove text from TextField when you press the 'X' icon
+                        }
+                    ) {
+                        Icon(
+                            Icons.Default.Close,
+                            contentDescription = "",
+                            modifier = Modifier
+                                .padding(15.dp)
+                                .size(24.dp)
+                        )
+                    }
+                }
+            },
+            singleLine = true,
+            shape = RectangleShape, // The TextFiled has rounded corners top left and right by default
+            colors = TextFieldDefaults.textFieldColors(
+                textColor = Color.Gray,
+                leadingIconColor = Color.Gray,
+                trailingIconColor = Color.Gray,
+                backgroundColor =  Color(0x55ffffff),
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent
+            )
+        )
+    }
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -139,26 +192,7 @@ class MainActivity2 : ComponentActivity() {
                               Box(modifier = Modifier
                                   .padding(1.dp, 2.dp)
                                   .height(45.dp)) {
-                                  TextField(value = text.value,  placeholder = {
-                                      Text(text = "Search", color = Color.White, style = androidx.compose.material.MaterialTheme.typography.caption,
-                                      ) }, onValueChange = {
-                                      text.value = it
-
-                                  }, enabled = true,
-                                      readOnly = false,
-
-                                      textStyle = TextStyle(color = Color.White,  fontSize = 12.sp), modifier = Modifier
-                                          .width(IntrinsicSize.Max)
-                                          .clip(RoundedCornerShape(50))
-                                          .border(
-                                              1.dp, Color(0x66ffffff),
-                                              shape = RoundedCornerShape(50)
-                                          )
-                                          .background(Color(0x44ffffff)).fillMaxWidth(),
-                                      trailingIcon = {
-                                          Icon(Icons.Outlined.Search, "")
-                                      }
-                                  )
+                                  SearchView(state = text)
                               }
                               IconButton(
 
