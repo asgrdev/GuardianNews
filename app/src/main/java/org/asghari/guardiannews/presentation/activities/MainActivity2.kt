@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.os.Debug
+import android.print.PrintAttributes.Margins
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -12,7 +13,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 
+
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material3.MaterialTheme
 
@@ -22,14 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.materialIcon
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.DpOffset
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,9 +42,6 @@ import org.asghari.guardiannews.presentation.composableviews.HomePageScreen
 import org.asghari.guardiannews.presentation.ui.theme.GuardianNewsTheme
 import org.asghari.guardiannews.presentation.viewmodels.NewsListViewModel
 import java.security.AccessController.getContext
- import androidx.compose.material.icons.filled.Menu  // ok
-import androidx.compose.material.icons.filled.Print
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Search
@@ -55,8 +53,10 @@ import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextDirection
+import androidx.compose.ui.unit.*
 import okhttp3.internal.immutableListOf
 import org.asghari.guardiannews.R
 import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
@@ -65,57 +65,113 @@ import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 class MainActivity2 : ComponentActivity() {
     @Composable
     fun SearchView(state: MutableState<TextFieldValue>) {
-        TextField(
-            value = state.value,
-            onValueChange = { value ->
-                state.value = value
-            },
 
-            modifier = Modifier.padding(0.dp)
-                .clip(RoundedCornerShape(50))
-                .border(
-                    1.dp, Color(0x66ffffff),
-
-                )
-                .background(Color(0x44ffffff)),
-            textStyle = TextStyle(color = Color.DarkGray, fontSize = 16.sp),
-            leadingIcon = {
-                Icon(
-                    Icons.Default.Search,
-                    contentDescription = "",
-
-                )
-            },
-            trailingIcon = {
-                if (state.value != TextFieldValue("")) {
-                    IconButton(
-                        onClick = {
-                            state.value =
-                                TextFieldValue("") // Remove text from TextField when you press the 'X' icon
-                        }
-                    ) {
-                        Icon(
-                            Icons.Default.Close,
-                            contentDescription = "",
-                            modifier = Modifier
-                                .padding(15.dp)
-                                .size(24.dp)
-                        )
+        var search_filed_state = remember { mutableStateOf(false) }
+        if (!(search_filed_state.value)) {
+            Box(modifier = Modifier.background(Color.Transparent)) {
+                IconButton(
+                    modifier = Modifier.align(Alignment.CenterEnd),
+                    onClick = {
+                        search_filed_state.value = !(search_filed_state.value)
+                        // Remove text from TextField when you press the 'X' icon
                     }
+                ) {
+                    Icon(
+                        Icons.Default.Search,
+
+                        modifier = Modifier
+                            .align(Alignment.CenterStart)
+                            .padding(10.dp),
+                        contentDescription = "",
+
+                        )
                 }
-            },
-            singleLine = true,
-            shape = RectangleShape, // The TextFiled has rounded corners top left and right by default
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = Color.Gray,
-                leadingIconColor = Color.Gray,
-                trailingIconColor = Color.Gray,
-                backgroundColor =  Color(0x55ffffff),
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent
-            )
-        )
+            }
+        } else {
+
+            Row(modifier = Modifier.padding(0.dp, 0.dp, 12.dp, 0.dp))
+            {
+                BasicTextField(
+                    value = state.value,
+                    onValueChange = { value ->
+                        state.value = value
+                    },
+                    singleLine = true,
+                    modifier = Modifier
+                        .padding(0.dp)
+                        .fillMaxHeight()
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(50)).
+                        background(Color(0x77ffffff), shape = RoundedCornerShape(50))
+                        .border(1.dp, Color(0x88ffffff), shape =  RoundedCornerShape(50))
+                    ,  textStyle = TextStyle(
+                        color = Color.Gray,
+                        fontSize = 16.sp,
+                        textDirection = TextDirection.ContentOrLtr,
+                        textAlign = TextAlign.Start
+                    ),
+                    decorationBox = { innerTextField ->
+                        Box(modifier = Modifier.background(Color.Transparent)) {
+                            IconButton(
+                                modifier = Modifier.align(Alignment.CenterStart),
+                                onClick = {
+                                    search_filed_state.value = false;
+                                    // Remove text from TextField when you press the 'X' icon
+                                }
+                            ) {
+                                Icon(
+                                    Icons.Default.ArrowBack,
+
+                                    modifier = Modifier
+                                        .align(Alignment.CenterStart)
+                                        .padding(10.dp),
+                                    contentDescription = "",
+
+                                    )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .padding(40.dp, 2.dp)
+                                    .align(Alignment.CenterStart)
+                            ) {
+                                innerTextField()
+                            }
+                            if (state.value != TextFieldValue("")) {
+                                IconButton(
+                                    modifier = Modifier.align(Alignment.CenterEnd),
+                                    onClick = {
+                                        state.value =
+                                            TextFieldValue("")
+                                       // Remove text from TextField when you press the 'X' icon
+                                    }
+                                ) {
+                                    Icon(
+                                        Icons.Default.Close,
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .padding(10.dp)
+                                            .size(24.dp)
+                                            .align(Alignment.CenterEnd),
+                                    )
+                                }
+                            }
+                            else{
+                                Icon(
+                                    Icons.Default.Search,
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .padding(10.dp)
+                                        .size(24.dp)
+                                        .align(Alignment.CenterEnd),
+                                )
+                            }
+
+                        }
+                    },
+
+                    )
+            }
+        }
     }
 
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
