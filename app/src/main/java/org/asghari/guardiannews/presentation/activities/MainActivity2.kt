@@ -67,6 +67,7 @@ class MainActivity2 : ComponentActivity() {
     fun SearchView(state: MutableState<TextFieldValue>) {
 
         var search_filed_state = remember { mutableStateOf(false) }
+
         if (!(search_filed_state.value)) {
             Box(modifier = Modifier.background(Color.Transparent)) {
                 IconButton(
@@ -95,6 +96,7 @@ class MainActivity2 : ComponentActivity() {
                     value = state.value,
                     onValueChange = { value ->
                         state.value = value
+
                     },
                     singleLine = true,
                     modifier = Modifier
@@ -271,7 +273,7 @@ class MainActivity2 : ComponentActivity() {
                           modifier = Modifier.fillMaxSize(),
                           color = MaterialTheme.colorScheme.background,
                       ) {
-                          AppNavHost(navController = navController)
+                          AppNavHost(searchState = text, navController = navController)
 
                       }
                   }

@@ -1,7 +1,9 @@
 package org.asghari.guardiannews.presentation.composableviews
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
@@ -16,14 +18,14 @@ import java.nio.charset.StandardCharsets
 @Composable
 fun AppNavHost(
     navController: NavHostController = rememberNavController(),
-
+    searchState : MutableState<TextFieldValue>
 ) {
     NavHost(
         navController = navController,
         startDestination =  ScreensRoute.HomePage().route
     ) {
         composable(ScreensRoute.HomePage().route) {
-          HomePageScreen {
+          HomePageScreen(searchState) {
               val encodedUrl = URLEncoder.encode(it, StandardCharsets.UTF_8.toString())
               navController.navigate( "${ScreensRoute.NewsScreen().route}/$encodedUrl")
           }

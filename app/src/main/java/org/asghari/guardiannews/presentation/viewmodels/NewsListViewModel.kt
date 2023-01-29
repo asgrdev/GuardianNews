@@ -18,6 +18,7 @@ import org.asghari.guardiannews.data.local.NewsDao
 import org.asghari.guardiannews.data.models.NewsList
 import org.asghari.guardiannews.data.models.Response
 import org.asghari.guardiannews.domain.LastNewsListUseCase
+import org.asghari.guardiannews.domain.SearchInNewsListUseCase
 import org.asghari.guardiannews.other.NewsListState
 import org.asghari.guardiannews.presentation.adapters.NewsListAdapter
 import retrofit2.HttpException
@@ -25,12 +26,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NewsListViewModel @Inject constructor
-    (private val lastNewsListUseCase: LastNewsListUseCase):
+    (private val lastNewsListUseCase: LastNewsListUseCase,private val searchInNewsListUseCase: SearchInNewsListUseCase):
     ViewModel() {
 
     private val _newsList: MutableSharedFlow<NewsListState> = MutableStateFlow(NewsListState.Loading("",null))
     val newsList = mutableStateOf<NewsListState>(NewsListState.Loading("",null))
-
+    lateinit var call:NewsList
 
     lateinit var tmpNewsList:NewsList
     var current_page:Int = 1
@@ -38,12 +39,17 @@ class NewsListViewModel @Inject constructor
         getNewsList()
     }
 
-     fun getNewsList() {
+     fun getNewsList(query:String="") {
          current_page = 1
          viewModelScope.launch {
             _newsList.emit(NewsListState.Loading("",null))
-            var call = lastNewsListUseCase.run()
 
+             if(query.equals("")) {
+                  call = lastNewsListUseCase.run()
+             }
+             else{
+                  call = searchInNewsListUseCase(query,current_page);
+             }
             call?.let {
                 if (it == null) {
                     tmpNewsList = it
@@ -63,12 +69,18 @@ class NewsListViewModel @Inject constructor
 
     }
 
-    fun LoadMore() {
+    fun LoadMore(query:String="") {
         current_page++
         Log.d("Loa", "Show" + current_page)
         viewModelScope.launch {
             _newsList.emit(NewsListState.Loading("",tmpNewsList))
-            var call = lastNewsListUseCase.run(current_page);
+
+            if(query.equals("")) {
+                call = lastNewsListUseCase.run(current_page);
+            }
+            else{
+                call = searchInNewsListUseCase(query,current_page);
+            }
             call?.let {
 
                 try {

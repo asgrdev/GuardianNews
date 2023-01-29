@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.os.HandlerCompat
@@ -64,12 +65,18 @@ fun LazyListState.OnBottomReached(buffer : Int = 0,
 }
 
 @Composable
-fun HomePageScreen(onNavigation:(newsId:String?) -> Unit) {
+fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:String?) -> Unit) {
 
     val _newsListViewModel: NewsListViewModel = hiltViewModel()
     var dataState: NewsListState = _newsListViewModel.newsList.value
     val swipeRefreshState = rememberSwipeRefreshState(false)
     Log.d("Loading", dataState.javaClass.name)
+    LaunchedEffect(state.value.text){
+        Log.d("ggg>",state.value.text)
+        if(state.value.text.length>3) {
+            _newsListViewModel.getNewsList(state.value.text)
+        }
+    }
     Box(
         modifier = Modifier
             .background(Color.White)
@@ -84,13 +91,13 @@ fun HomePageScreen(onNavigation:(newsId:String?) -> Unit) {
                 listState.firstVisibleItemIndex.toString() + ">>>" + dataState.javaClass.name
             )
 
-            _newsListViewModel.LoadMore()
+            _newsListViewModel.LoadMore(state.value.text)
         }
 
         SwipeRefresh(
             state = swipeRefreshState,
             onRefresh = {
-                _newsListViewModel.getNewsList()
+                _newsListViewModel.getNewsList(state.value.text)
                 swipeRefreshState.isRefreshing = true
             },
         )
