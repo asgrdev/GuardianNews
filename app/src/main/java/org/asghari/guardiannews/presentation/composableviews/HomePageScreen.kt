@@ -73,8 +73,16 @@ fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:Stri
     Log.d("Loading", dataState.javaClass.name)
     LaunchedEffect(state.value.text){
         Log.d("ggg>",state.value.text)
-        if(state.value.text.length>3) {
+        if(!_newsListViewModel.currentSearchQuery.equals(state.value.text)){
+        if(state.value.text.length>=3) {
+                _newsListViewModel.getNewsList(state.value.text)
+        }
+        _newsListViewModel.tmpNewsList?.let {
+        if(state.value.text.length<=0 &&  it.response.results.size>0)
+        {
             _newsListViewModel.getNewsList(state.value.text)
+        }
+        }
         }
     }
     Box(

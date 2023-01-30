@@ -33,7 +33,8 @@ class NewsListViewModel @Inject constructor
     val newsList = mutableStateOf<NewsListState>(NewsListState.Loading("",null))
     lateinit var call:NewsList
 
-    lateinit var tmpNewsList:NewsList
+    var tmpNewsList:NewsList? = null
+    var currentSearchQuery:String = ""
     var current_page:Int = 1
     init {
         getNewsList()
@@ -41,6 +42,7 @@ class NewsListViewModel @Inject constructor
 
      fun getNewsList(query:String="") {
          current_page = 1
+         currentSearchQuery = query
          viewModelScope.launch {
             _newsList.emit(NewsListState.Loading("",null))
 
@@ -52,7 +54,6 @@ class NewsListViewModel @Inject constructor
              }
             call?.let {
                 if (it == null) {
-                    tmpNewsList = it
                     _newsList.emit(NewsListState.Error("Error!!", null))
                 } else {
                     tmpNewsList = it
@@ -71,6 +72,7 @@ class NewsListViewModel @Inject constructor
 
     fun LoadMore(query:String="") {
         current_page++
+        currentSearchQuery = query
         Log.d("Loa", "Show" + current_page)
         viewModelScope.launch {
             _newsList.emit(NewsListState.Loading("",tmpNewsList))
@@ -84,8 +86,10 @@ class NewsListViewModel @Inject constructor
             call?.let {
 
                 try {
-                    tmpNewsList.response.results += it.response.results
-                    _newsList.emit(NewsListState.Success("", tmpNewsList))
+                    tmpNewsList?.let { tmpedNewsList->
+                        tmpedNewsList.response.results += it.response.results
+                      _newsList.emit(NewsListState.Success("", tmpedNewsList))
+                    }
                 }
                 catch (e:HttpException){
                     _newsList.emit(NewsListState.Error("Error!!", null))

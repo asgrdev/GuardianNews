@@ -46,6 +46,7 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
@@ -103,9 +104,9 @@ class MainActivity2 : ComponentActivity() {
                         .padding(0.dp)
                         .fillMaxHeight()
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(50)).
-                        background(Color(0x77ffffff), shape = RoundedCornerShape(50))
-                        .border(1.dp, Color(0x88ffffff), shape =  RoundedCornerShape(50))
+                        .clip(RoundedCornerShape(50))
+                        .background(Color(0x77ffffff), shape = RoundedCornerShape(50))
+                        .border(1.dp, Color(0x88ffffff), shape = RoundedCornerShape(50))
                     ,  textStyle = TextStyle(
                         color = Color.Gray,
                         fontSize = 16.sp,
