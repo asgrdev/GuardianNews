@@ -1,7 +1,7 @@
 package org.asghari.guardiannews.data.remote
 
-import org.asghari.guardiannews.data.models.NewsList
-import org.asghari.guardiannews.data.models.Response
+import org.asghari.guardiannews.data.models.news.NewsList
+import org.asghari.guardiannews.data.models.sections.Sections
 
 interface RemoteDataSource {
     suspend fun getNewsById( newsIds:String,
@@ -15,4 +15,8 @@ interface RemoteDataSource {
 
     suspend fun getLastNewsList(  page:Int,
                                   showFields:String): NewsList
+
+    suspend fun getSections():Sections
+
+    suspend fun getSectionsById(id:String):Sections
 }

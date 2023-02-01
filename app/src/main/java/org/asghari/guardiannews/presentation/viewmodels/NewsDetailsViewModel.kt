@@ -1,7 +1,6 @@
 package org.asghari.guardiannews.presentation.viewmodels
 
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.test.moviehub.domain.base.UseCaseCallback
@@ -9,8 +8,8 @@ import com.test.moviehub.domain.exceptions.ErrorModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import org.asghari.guardiannews.data.models.NewsList
-import org.asghari.guardiannews.domain.NewsDetailsUseCase
+import org.asghari.guardiannews.data.models.news.NewsList
+import org.asghari.guardiannews.domain.usecases.NewsDetailsUseCase
 import org.asghari.guardiannews.other.NewsListState
 import javax.inject.Inject
 

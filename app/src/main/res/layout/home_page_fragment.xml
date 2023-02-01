@@ -4,7 +4,7 @@
 <data>
     <variable
         name="data"
-        type="org.asghari.guardiannews.data.models.NewsList" />
+        type="org.asghari.guardiannews.data.models.news.NewsList" />
 </data>
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"

@@ -1,11 +1,14 @@
 package org.asghari.guardiannews.data.remote
 
-import org.asghari.guardiannews.data.models.NewsList
-import org.asghari.guardiannews.data.models.Response
-import retrofit2.Call
+import org.asghari.guardiannews.data.models.news.NewsList
+import org.asghari.guardiannews.data.models.sections.Sections
+import org.asghari.guardiannews.data.remote.apiservices.GuardianNewsApiService
+import org.asghari.guardiannews.data.remote.apiservices.SectionsApiService
 import javax.inject.Inject
 
-class RemoteDataSourceImp @Inject constructor(private val guardianNewsApiService: GuardianNewsApiService):RemoteDataSource {
+class RemoteDataSourceImp @Inject constructor(private val guardianNewsApiService: GuardianNewsApiService
+, private val sectionsApiService: SectionsApiService
+):RemoteDataSource {
     override suspend fun getNewsById(newsIds: String, showFields: String): NewsList {
        return guardianNewsApiService.getNewsById(newsIds,showFields)
     }
@@ -21,4 +24,14 @@ class RemoteDataSourceImp @Inject constructor(private val guardianNewsApiService
     override suspend fun getLastNewsList(page: Int, showFields: String): NewsList {
         return guardianNewsApiService.getLastNewsList(page,showFields)
     }
+
+    override suspend fun getSections(): Sections {
+        return sectionsApiService.getSections()
+    }
+
+    override suspend fun getSectionsById(id: String): Sections {
+        return sectionsApiService.getSectionsById(id);
+    }
+
+
 }

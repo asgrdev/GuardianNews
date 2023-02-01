@@ -1,4 +1,4 @@
-package org.asghari.guardiannews.data.models
+package org.asghari.guardiannews.data.models.news
 
 
 import com.google.gson.annotations.SerializedName

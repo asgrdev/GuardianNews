@@ -1,7 +1,6 @@
-package org.asghari.guardiannews.data.models
+package org.asghari.guardiannews.data.models.news
 
 
-import androidx.annotation.Nullable
 import com.google.gson.annotations.SerializedName
 
 data class Result(

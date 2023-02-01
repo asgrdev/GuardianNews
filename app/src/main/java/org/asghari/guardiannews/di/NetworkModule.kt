@@ -1,12 +1,11 @@
 package org.asghari.guardiannews.di
 
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import org.asghari.guardiannews.data.remote.GuardianNewsApiService
+import org.asghari.guardiannews.data.remote.apiservices.GuardianNewsApiService
+import org.asghari.guardiannews.data.remote.apiservices.SectionsApiService
 import org.asghari.guardiannews.other.Constants
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -18,10 +17,19 @@ import javax.inject.Singleton
 class NetworkModule {
     @Singleton
     @Provides
-    fun ProvidesRetrofitApi():GuardianNewsApiService{
+    fun ProvidesRetrofitNewsApi(): GuardianNewsApiService {
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build().create(GuardianNewsApiService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun ProvidesRetrofitSectionApi(): SectionsApiService {
+        return Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build().create(SectionsApiService::class.java)
     }
 }

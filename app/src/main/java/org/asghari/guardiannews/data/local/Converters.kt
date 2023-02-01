@@ -2,8 +2,8 @@ package org.asghari.guardiannews.data.local
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson
-import org.asghari.guardiannews.data.models.Tag
-import org.asghari.guardiannews.data.models.Fields
+import org.asghari.guardiannews.data.models.news.Tag
+import org.asghari.guardiannews.data.models.news.Fields
 
 class Converters {
 
@@ -20,14 +20,14 @@ class Converters {
     fun  ToList(value: String) = Gson().fromJson(value, Array<org.asghari.guardiannews.data.local.model.Tag>::class.java).toList()
 
     @TypeConverter
-    fun fieldToJson(value:Fields?) = Gson().toJson(value)
+    fun fieldToJson(value: Fields?) = Gson().toJson(value)
 
     @TypeConverter
     fun jsonTofield(value: String) = Gson().fromJson(value, Fields::class.java)
 
 
     @TypeConverter
-    fun tagToJson(value:Tag) = Gson().toJson(value)
+    fun tagToJson(value: Tag) = Gson().toJson(value)
 
     @TypeConverter
     fun jsonTotag(value: String) = Gson().fromJson(value, Tag::class.java)

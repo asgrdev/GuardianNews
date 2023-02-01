@@ -6,7 +6,7 @@
     <data>
         <variable
             name="News"
-            type="org.asghari.guardiannews.data.models.NewsList" />
+            type="org.asghari.guardiannews.data.models.news.NewsList" />
     </data>
 <androidx.constraintlayout.widget.ConstraintLayout
     android:background="#fcfcfc"

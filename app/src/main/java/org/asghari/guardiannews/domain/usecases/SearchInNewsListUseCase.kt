@@ -1,12 +1,8 @@
-package org.asghari.guardiannews.domain
+package org.asghari.guardiannews.domain.usecases
 
 
-import androidx.paging.PagingData
-import com.test.moviehub.domain.base.UseCase
-import com.test.moviehub.domain.exceptions.IErrorHandler
-import kotlinx.coroutines.flow.Flow
-import org.asghari.guardiannews.data.models.NewsList
-import org.asghari.guardiannews.data.models.Result
+import org.asghari.guardiannews.data.models.news.NewsList
+import org.asghari.guardiannews.domain.repositories.GuardianNewsRepository
 import javax.inject.Inject
 
 class SearchInNewsListUseCase @Inject constructor(private  val  guardianNewsRepository: GuardianNewsRepository){

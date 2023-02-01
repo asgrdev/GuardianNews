@@ -1,8 +1,7 @@
-package org.asghari.guardiannews.data.models
+package org.asghari.guardiannews.data.models.news
 
 
 import com.google.gson.annotations.SerializedName
-import org.asghari.guardiannews.data.local.model.NewsItem
 
 data class Response(
     @SerializedName("currentPage")

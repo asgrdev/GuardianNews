@@ -2,7 +2,6 @@ package org.asghari.guardiannews.data.local
 
 import androidx.room.*
 import org.asghari.guardiannews.data.local.model.NewsItem
-import org.asghari.guardiannews.data.models.Result
 
 @Dao
 abstract class  NewsDao {

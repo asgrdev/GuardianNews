@@ -6,10 +6,10 @@
 //import androidx.paging.RemoteMediator
 //import org.asghari.guardiannews.data.local.NewsDatabase
 //import org.asghari.guardiannews.data.local.model.NewsItem
-//import org.asghari.guardiannews.data.models.NewsList
-//import org.asghari.guardiannews.data.models.Response
-//import org.asghari.guardiannews.data.remote.GuardianNewsApiService
-//import org.asghari.guardiannews.domain.GuardianNewsRepository
+//import org.asghari.guardiannews.data.models.news.NewsList
+//import org.asghari.guardiannews.data.models.news.Response
+//import org.asghari.guardiannews.data.remote.apiservices.GuardianNewsApiService
+//import org.asghari.guardiannews.domain.repositories.GuardianNewsRepository
 //import retrofit2.HttpException
 //import java.io.IOException
 //import java.util.concurrent.TimeUnit

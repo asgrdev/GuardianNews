@@ -38,5 +38,10 @@ fun AppNavHost(
             NewsScreen(name = it.arguments?.getString("newsId"),navController)
         }
 
+        composable("${ScreensRoute.SectionsScreen().route}")
+        {
+            SectionsScreen()
+        }
+
     }
 }

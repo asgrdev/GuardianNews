@@ -1,15 +1,11 @@
 package org.asghari.guardiannews.data.local
 
 import android.util.Log
-import android.widget.Toast
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import org.asghari.guardiannews.data.models.NewsList
-import org.asghari.guardiannews.data.models.Response
-import org.asghari.guardiannews.data.models.Result
-import org.asghari.guardiannews.data.remote.GuardianNewsApiService
-import org.asghari.guardiannews.domain.GuardianNewsRepository
-import retrofit2.Call
+import org.asghari.guardiannews.data.models.news.NewsList
+import org.asghari.guardiannews.data.models.news.Result
+import org.asghari.guardiannews.data.remote.apiservices.GuardianNewsApiService
 import javax.inject.Inject
 
 class NewsPagingSource @Inject constructor(

@@ -7,24 +7,34 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import org.asghari.guardiannews.data.ErrorHandler
 import org.asghari.guardiannews.data.local.NewsPagingSource
-import org.asghari.guardiannews.data.remote.GuardianNewsApiService
+import org.asghari.guardiannews.data.remote.apiservices.GuardianNewsApiService
 import org.asghari.guardiannews.data.remote.RemoteDataSource
 import org.asghari.guardiannews.data.remote.RemoteDataSourceImp
+import org.asghari.guardiannews.data.remote.apiservices.SectionsApiService
 import org.asghari.guardiannews.data.repository.GuardianNewsRepositoryImp
-import org.asghari.guardiannews.domain.GuardianNewsRepository
+import org.asghari.guardiannews.data.repository.SectionsRepositoryImp
+import org.asghari.guardiannews.domain.repositories.GuardianNewsRepository
+import org.asghari.guardiannews.domain.repositories.SectionsRepository
 import java.util.*
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class DataModule {
+
     @Provides
     @Singleton
-    fun provideRepository(guardianNewsApiService: GuardianNewsApiService, remoteDataSource: RemoteDataSource):GuardianNewsRepository
+    fun provideNewsRepository( remoteDataSource: RemoteDataSource): GuardianNewsRepository
     {
-        return GuardianNewsRepositoryImp(guardianNewsApiService,remoteDataSource)
+        return GuardianNewsRepositoryImp(remoteDataSource)
     }
 
+    @Provides
+    @Singleton
+    fun privideSectionsRepository(remoteDataSource: RemoteDataSource):SectionsRepository
+    {
+        return SectionsRepositoryImp(remoteDataSource)
+    }
 
     @Provides
     @Singleton
@@ -32,12 +42,12 @@ class DataModule {
         return NewsPagingSource(guardianNewsApiService)
     }
 
-
     @Provides
     @Singleton
-    fun provideRemoteDataSource(guardianNewsApiService: GuardianNewsApiService):RemoteDataSource{
-        return RemoteDataSourceImp(guardianNewsApiService)
+    fun provideRemoteDataSource(guardianNewsApiService: GuardianNewsApiService, sectionsApiService: SectionsApiService):RemoteDataSource{
+        return RemoteDataSourceImp(guardianNewsApiService, sectionsApiService)
     }
+
 
     @Singleton
     @Provides

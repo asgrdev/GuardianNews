@@ -1,10 +1,6 @@
-package org.asghari.guardiannews.domain
+package org.asghari.guardiannews.domain.repositories
 
-import androidx.paging.PagingData
-import org.asghari.guardiannews.data.models.Response
-import org.asghari.guardiannews.data.models.Result
-import kotlinx.coroutines.flow.Flow
-import org.asghari.guardiannews.data.models.NewsList
+import org.asghari.guardiannews.data.models.news.NewsList
 
 
 interface GuardianNewsRepository {
