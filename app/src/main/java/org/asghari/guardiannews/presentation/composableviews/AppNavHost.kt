@@ -22,7 +22,7 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination =  ScreensRoute.HomePage().route
+        startDestination =  ScreensRoute.SectionsScreen().route
     ) {
         composable(ScreensRoute.HomePage().route) {
           HomePageScreen(searchState) {
