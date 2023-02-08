@@ -7,7 +7,7 @@ class SaveSelectedSectionsUseCase @Inject constructor(private val settingsReposi
    operator suspend fun invoke(section:String)
    {
        settingsRepository.getSelectedSections().collect{ currentSections ->
-           var newSections:MutableList<String> = currentSections.split(",") as MutableList<String>
+           var newSections:MutableList<String> = currentSections.split(",").toMutableList()
            if(section !in newSections) {
                newSections.add(section)
            }

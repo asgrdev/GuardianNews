@@ -16,7 +16,7 @@ class SettingsRepositoryImpl @Inject constructor(private val localDataSource: Lo
         localDataSource.addSection(ids)
     }
 
-  override suspend fun  getSelectedSections(): Flow<String> {
+    override suspend fun  getSelectedSections(): Flow<String> {
       return localDataSource.getSelectedSections()
     }
 }

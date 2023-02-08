@@ -25,6 +25,10 @@ class LocalDataSourceImpl(appContext: Context):LocalDataSource {
         }
     }
 
+    override suspend fun removeSection(ids: String) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun getSelectedSections(): Flow<String> {
         return dataStore.data.map { preferences ->
             preferences[PreferencesKeys.SECTIONS] ?: ""
