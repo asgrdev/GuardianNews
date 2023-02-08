@@ -16,4 +16,5 @@ data class Result(
     val webTitle: String,
     @SerializedName("webUrl")
     val webUrl: String
+
 )

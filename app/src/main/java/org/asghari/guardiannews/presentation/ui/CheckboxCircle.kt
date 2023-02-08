@@ -29,8 +29,8 @@ import com.airbnb.lottie.model.content.CircleShape
 import okhttp3.internal.wait
 import java.lang.Math.floor
 @Composable
-fun RoundedCheckView(Checkboxtext:String) {
-    val isChecked = remember { mutableStateOf(false) }
+fun RoundedCheckView(Checkboxtext:String,isSelected:Boolean=false) {
+    val isChecked = remember { mutableStateOf(isSelected) }
     val checkedText = remember { mutableStateOf(Checkboxtext) }
     val circleSize = remember { mutableStateOf(18.dp) }
     val circleThickness = remember { mutableStateOf(2.dp) }
@@ -42,10 +42,10 @@ fun RoundedCheckView(Checkboxtext:String) {
                 isChecked.value = it
 
                 if (isChecked.value) {
-
                     circleSize.value = 18.dp
                     circleThickness.value = 2.dp
                     color.value = Color.Black
+
                 } else {
 
                     circleSize.value = 18.dp

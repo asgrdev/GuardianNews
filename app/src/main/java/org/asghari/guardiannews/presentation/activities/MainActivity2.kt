@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.*
 import org.asghari.guardiannews.R
+import org.asghari.guardiannews.other.ScreensRoute
 
 @AndroidEntryPoint
 class MainActivity2 : ComponentActivity() {
@@ -188,15 +189,10 @@ class MainActivity2 : ComponentActivity() {
                               // items are added vertically
 
                               DropdownMenuItem(onClick = {
-                                  Toast.makeText(
-                                      applicationContext,
-                                      "Refresh Click",
-                                      Toast.LENGTH_SHORT
-                                  )
-                                      .show()
+                                  navController.navigate(ScreensRoute.SectionsScreen().route)
                                   dropDownMenuExpanded.value = false
                               }) {
-                                  Text("Refresh")
+                                  Text("Sections")
                               }
 
                               DropdownMenuItem(onClick = {

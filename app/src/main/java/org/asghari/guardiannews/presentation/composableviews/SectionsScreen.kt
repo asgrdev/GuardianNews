@@ -1,6 +1,7 @@
 package org.asghari.guardiannews.presentation.composableviews
 
 import FlowRow
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,6 +38,8 @@ import org.asghari.guardiannews.presentation.viewmodels.SectionsViewModel
 fun SectionsScreen() {
     val sectionsViewModel: SectionsViewModel = hiltViewModel()
     val sections = sectionsViewModel.sectionList.value
+    Log.d(">>>>",sections.toString())
+    val selectedSections = sectionsViewModel.selectedSectionsList.value
     Column() {
 
         Text(
@@ -98,7 +101,8 @@ fun SectionsScreen() {
                                     onCheckedChange = {
 
                                     })*/
-                                RoundedCheckView("${item.id}")
+                                var sectionState = selectedSections.contains(item.id)
+                                RoundedCheckView("${item.id}" , sectionState)
 
 
                             }

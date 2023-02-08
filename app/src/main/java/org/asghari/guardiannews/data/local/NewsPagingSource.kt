@@ -17,7 +17,7 @@ class NewsPagingSource @Inject constructor(
     override fun getRefreshKey(state: PagingState<Int, Result>): Int? {
         return state.anchorPosition?.let{
                 anchorPosition ->
-            Log.d(">>>>>>>>rrrgg",">>>>>>>>")
+
             val anchorPage = state.closestPageToPosition(anchorPosition)
             anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
          }
@@ -26,12 +26,8 @@ class NewsPagingSource @Inject constructor(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Result> {
         return try {
             val nextPageNumber = params.key ?: 1
-            Log.d(">>>>>>>>rrr","===="+nextPageNumber)
-
-
-         //   NewsList = guardianNewsApiService.getNewsListBYQuery(nextPageNumber,query,"all")
+            //   NewsList = guardianNewsApiService.getNewsListBYQuery(nextPageNumber,query,"all")
             newsList = guardianNewsApiService.getLastNewsList(nextPageNumber,"starRating,thumbnail,short-url")
-            Log.d(">>>>>>>>rrr","=="+newsList.response)
 
             LoadResult.Page(
                 data = newsList.response.results,
@@ -40,8 +36,7 @@ class NewsPagingSource @Inject constructor(
             )
         }
         catch (e: Exception) {
-            Log.d(">>>>>>>>rrrbb",e.toString())
-            LoadResult.Error(e)
+               LoadResult.Error(e)
         }
 
 
