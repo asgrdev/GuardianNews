@@ -6,14 +6,14 @@ import org.asghari.guardiannews.domain.repositories.GuardianNewsRepository
 import javax.inject.Inject
 
 class SearchInNewsListUseCase @Inject constructor(private  val  guardianNewsRepository: GuardianNewsRepository){
-    operator suspend fun invoke(query:String,page: Int?): NewsList {
+    operator suspend fun invoke(query:String,  sections:String,page: Int?): NewsList {
         var mypage: Int = 1
        page?.let {
            if(it >= 1) {
            mypage = it;
        }
     }
-     return   guardianNewsRepository.getNewsListBYQuery(query,mypage, "starRating,thumbnail,short-url")
+     return   guardianNewsRepository.getNewsListBYQuery(query,sections,mypage, "starRating,thumbnail,short-url")
     }
 
 

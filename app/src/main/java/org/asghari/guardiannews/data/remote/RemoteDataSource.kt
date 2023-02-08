@@ -10,6 +10,16 @@ interface RemoteDataSource {
 
     suspend fun getNewsListBYQuery( page:Int,
                                     query:String,
+                                    sections:String,
+                                    showFields:String): NewsList
+
+
+    suspend fun getLastNewsList(  page:Int,
+                                  sections:String,
+                                  showFields:String): NewsList
+
+    suspend fun getNewsListBYQuery( page:Int,
+                                    query:String,
                                     showFields:String): NewsList
 
 

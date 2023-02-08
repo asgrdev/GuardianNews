@@ -16,28 +16,29 @@ import javax.inject.Inject
 @HiltViewModel
 class SectionsViewModel @Inject constructor(
     private val  getAllSectionsUseCase: GetAllSectionsUseCase
-,private val getSectionByIdUseCase: GetSectionByIdUseCase,private val getSelectedSectionsUseCase: GetSelectedSectionsUseCase
+    ,private val getSectionByIdUseCase: GetSectionByIdUseCase
+    ,private val getSelectedSectionsUseCase: GetSelectedSectionsUseCase
     ,private val saveSelectedSectionUsecase: SaveSelectedSectionsUseCase
     ,private val deleteSectionByIdUsecase: DeleteSectionByIdUsecase):ViewModel() {
-    private val _SectionsList:MutableSharedFlow<SectionsState>  =  MutableStateFlow<SectionsState>(
-        SectionsState.Loading("", null))
-    var sectionList = mutableStateOf<SectionsState>(SectionsState.Loading("",null))
-    private val _SelectedSections:MutableSharedFlow<List<String>> = MutableStateFlow<List<String>>(
+    private val _SectionsList: MutableSharedFlow<SectionsState> = MutableStateFlow<SectionsState>(
+        SectionsState.Loading("", null)
+    )
+    var sectionList = mutableStateOf<SectionsState>(SectionsState.Loading("", null))
+    private val _SelectedSections: MutableSharedFlow<List<String>> = MutableStateFlow<List<String>>(
         listOf()
     )
     var selectedSectionsList = mutableStateOf<List<String>>(listOf())
+
     init {
         getSectionsList()
         getSelectedSectionsList()
     }
 
-    fun toggleSelectedSection(isChecked:Boolean, sectionId:String)
-    {
+    fun toggleSelectedSection(isChecked: Boolean, sectionId: String) {
         viewModelScope.launch {
             if (isChecked) {
                 saveSelectedSectionUsecase(sectionId)
-            }
-            else{
+            } else {
                 deleteSectionByIdUsecase(sectionId)
             }
         }
@@ -59,11 +60,12 @@ class SectionsViewModel @Inject constructor(
 
         }
     }
+
     private fun getSelectedSectionsList() {
         viewModelScope.launch {
             try {
                 getSelectedSectionsUseCase().collect { currentSections ->
-                    val selectedList:List<String> = currentSections.split(",")
+                    val selectedList: List<String> = currentSections.split(",")
                     _SelectedSections.emit(selectedList)
                     _SelectedSections.collectLatest {
                         selectedSectionsList.value = it

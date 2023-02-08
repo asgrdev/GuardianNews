@@ -14,12 +14,25 @@ interface GuardianNewsApiService {
     @GET("/search")
     suspend fun getNewsListBYQuery(@Query("page") Page:Int,
                                    @Query("q") Query:String?,
+                                   @Query("section") Sections:String?,
                                    @Query("show-fields") ShowFields:String,
                                    @Query("api-key") ApiKey:String= BuildConfig.API_KEY): NewsList
 
     @GET("/search")
     suspend fun getLastNewsList(@Query("page") Page:Int,
-                            @Query("show-fields") ShowFields:String,
-                            @Query("api-key") ApiKey:String= BuildConfig.API_KEY): NewsList
+                                @Query("section") Sections:String?,
+                                @Query("show-fields") ShowFields:String,
+                                @Query("api-key") ApiKey:String= BuildConfig.API_KEY): NewsList
+
+    @GET("/search")
+    suspend fun getNewsListBYQuery(@Query("page") Page:Int,
+                                   @Query("q") Query:String?,
+                                   @Query("show-fields") ShowFields:String,
+                                   @Query("api-key") ApiKey:String= BuildConfig.API_KEY): NewsList
+
+    @GET("/search")
+    suspend fun getLastNewsList(@Query("page") Page:Int,
+                                @Query("show-fields") ShowFields:String,
+                                @Query("api-key") ApiKey:String= BuildConfig.API_KEY): NewsList
 
 }

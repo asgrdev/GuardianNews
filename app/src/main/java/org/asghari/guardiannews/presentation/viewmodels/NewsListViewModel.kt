@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.asghari.guardiannews.data.models.news.NewsList
+import org.asghari.guardiannews.domain.usecases.GetSelectedSectionsUseCase
 import org.asghari.guardiannews.domain.usecases.LastNewsListUseCase
 import org.asghari.guardiannews.domain.usecases.SearchInNewsListUseCase
 import org.asghari.guardiannews.other.NewsListState
@@ -16,7 +17,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NewsListViewModel @Inject constructor
-    (private val lastNewsListUseCase: LastNewsListUseCase, private val searchInNewsListUseCase: SearchInNewsListUseCase):
+    (private val lastNewsListUseCase: LastNewsListUseCase
+    , private val searchInNewsListUseCase: SearchInNewsListUseCase
+    ,private val getSelectedSectionsUseCase: GetSelectedSectionsUseCase
+):
     ViewModel() {
 
     private val _newsList: MutableSharedFlow<NewsListState> =
@@ -37,24 +41,29 @@ class NewsListViewModel @Inject constructor
         currentSearchQuery = query
         viewModelScope.launch {
             _newsList.emit(NewsListState.Loading("", null))
+            getSelectedSectionsUseCase().collect{
+                var sectionQuery:String = ""
+                if(it.length>0)
+                    sectionQuery = it.replace(",","|").substring(1)
 
-            if (query.equals("")) {
-                call = lastNewsListUseCase.run()
-            } else {
-                call = searchInNewsListUseCase(query, current_page);
-            }
-            call?.let {
-                if (it == null) {
-                    _newsList.emit(NewsListState.Error("Error!!", null))
+                if (query.equals("")) {
+                    call = lastNewsListUseCase(sections = sectionQuery)
                 } else {
-                    tmpNewsList = it
-                    _newsList.emit(NewsListState.Success("", it))
+                    call = searchInNewsListUseCase(query,sectionQuery, current_page);
+                }
+                call?.let {
+                    if (it == null) {
+                        _newsList.emit(NewsListState.Error("Error!!", null))
+                    } else {
+                        tmpNewsList = it
+                        _newsList.emit(NewsListState.Success("", it))
+
+                    }
+                    _newsList.collectLatest {
+                        newsList.value = it
+                    }
 
                 }
-                _newsList.collectLatest {
-                    newsList.value = it
-                }
-
             }
 
         }
@@ -64,28 +73,32 @@ class NewsListViewModel @Inject constructor
     fun LoadMore(query: String = "") {
         current_page++
         currentSearchQuery = query
-        Log.d("Loa", "Show" + current_page)
-        viewModelScope.launch {
+         viewModelScope.launch {
             _newsList.emit(NewsListState.Loading("", tmpNewsList))
+            getSelectedSectionsUseCase().collect {
+                var sectionQuery:String = ""
+                if(it.length>0)
+                   sectionQuery = it.replace(",","|").substring(1)
 
-            if (query.equals("")) {
-                call = lastNewsListUseCase.run(current_page);
-            } else {
-                call = searchInNewsListUseCase(query, current_page);
-            }
-            call?.let {
-
-                try {
-                    tmpNewsList?.let { tmpedNewsList ->
-                        tmpedNewsList.response.results += it.response.results
-                        _newsList.emit(NewsListState.Success("", tmpedNewsList))
-                    }
-                } catch (e: HttpException) {
-                    _newsList.emit(NewsListState.Error("Error!!", null))
+                if (query.equals("")) {
+                    call = lastNewsListUseCase(current_page,sectionQuery);
+                } else {
+                    call = searchInNewsListUseCase(query,sectionQuery, current_page);
                 }
-            }
-            _newsList.collectLatest {
-                newsList.value = it
+                call?.let {
+
+                    try {
+                        tmpNewsList?.let { tmpedNewsList ->
+                            tmpedNewsList.response.results += it.response.results
+                            _newsList.emit(NewsListState.Success("", tmpedNewsList))
+                        }
+                    } catch (e: HttpException) {
+                        _newsList.emit(NewsListState.Error("Error!!", null))
+                    }
+                }
+                _newsList.collectLatest {
+                    newsList.value = it
+                }
             }
         }
 

@@ -13,7 +13,6 @@ import dagger.hilt.components.SingletonComponent
 import org.asghari.guardiannews.data.ErrorHandler
 import org.asghari.guardiannews.data.local.LocalDataSource
 import org.asghari.guardiannews.data.local.LocalDataSourceImpl
-import org.asghari.guardiannews.data.local.NewsPagingSource
 import org.asghari.guardiannews.data.remote.apiservices.GuardianNewsApiService
 import org.asghari.guardiannews.data.remote.RemoteDataSource
 import org.asghari.guardiannews.data.remote.RemoteDataSourceImp
