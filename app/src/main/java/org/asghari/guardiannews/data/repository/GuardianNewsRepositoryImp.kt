@@ -12,7 +12,7 @@ class GuardianNewsRepositoryImp @Inject constructor(
 private val remoteDataSource: RemoteDataSource)
     : GuardianNewsRepository {
     override suspend fun getNewsById(newsIds: String, showFields: String): NewsList {
-        return remoteDataSource.getNewsById(newsIds,showFields)
+        return remoteDataSource.getNewsById(newsIds=newsIds,showFields=showFields)
     }
 
     override suspend fun getNewsListBYQuery(
@@ -22,17 +22,17 @@ private val remoteDataSource: RemoteDataSource)
         showFields: String
     ) : NewsList {
         if(sections.length>1) {
-            return remoteDataSource.getNewsListBYQuery(page, query, sections, showFields)
+            return remoteDataSource.getNewsListBYQuery(page=page, query= query , sections=sections , showFields=showFields)
         }else{
-            return remoteDataSource.getNewsListBYQuery(page, query , showFields)
+            return remoteDataSource.getNewsListBYQuery(page=page, query= query , showFields=showFields)
         }
     }
 
     override suspend fun getLastNewsList(page: Int, sections:String, showFields: String): NewsList {
         if(sections.length>1) {
-            return remoteDataSource.getLastNewsList(page, sections, showFields)
+            return remoteDataSource.getLastNewsList(page=page, sections=sections, showFields=showFields)
         }else{
-            return remoteDataSource.getLastNewsList(page, showFields)
+            return remoteDataSource.getLastNewsList(page=page, showFields= showFields)
         }
     }
 }

@@ -10,7 +10,7 @@ class RemoteDataSourceImp @Inject constructor(private val guardianNewsApiService
 , private val sectionsApiService: SectionsApiService
 ):RemoteDataSource {
     override suspend fun getNewsById(newsIds: String, showFields: String): NewsList {
-       return guardianNewsApiService.getNewsById(newsIds,showFields)
+       return guardianNewsApiService.getNewsById(NewsIds = newsIds, ShowFields = showFields)
     }
 
     override suspend fun getNewsListBYQuery(
@@ -19,7 +19,7 @@ class RemoteDataSourceImp @Inject constructor(private val guardianNewsApiService
         sections:String,
         showFields: String
     ): NewsList {
-        return guardianNewsApiService.getNewsListBYQuery(page,query,sections,showFields)
+        return guardianNewsApiService.getNewsListBYQuery(Page=page, Query = query, Sections = sections, ShowFields = showFields)
     }
 
     override suspend fun getNewsListBYQuery(
@@ -27,15 +27,15 @@ class RemoteDataSourceImp @Inject constructor(private val guardianNewsApiService
         query: String,
         showFields: String
     ): NewsList {
-        return guardianNewsApiService.getNewsListBYQuery(page,query, showFields)
+        return guardianNewsApiService.getNewsListBYQuery(Page=page, Query = query,  ShowFields = showFields)
     }
 
     override suspend fun getLastNewsList(page: Int,sections:String, showFields: String): NewsList {
-        return guardianNewsApiService.getLastNewsList(page,sections,showFields)
+        return guardianNewsApiService.getLastNewsList(Page=page,  Sections = sections, ShowFields = showFields)
     }
 
     override suspend fun getLastNewsList(page: Int, showFields: String): NewsList {
-        return guardianNewsApiService.getLastNewsList(page ,showFields)
+        return guardianNewsApiService.getLastNewsList(Page=page, ShowFields = showFields)
     }
 
     override suspend fun getSections(): Sections {

@@ -56,7 +56,7 @@ fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:Stri
     val swipeRefreshState = rememberSwipeRefreshState(false)
     Log.d("Loading", dataState.javaClass.name)
     LaunchedEffect(state.value.text){
-        Log.d("ggg>",state.value.text)
+
         if(!_newsListViewModel.currentSearchQuery.equals(state.value.text)){
         if(state.value.text.length>=3) {
                 _newsListViewModel.getNewsList(state.value.text)
@@ -78,6 +78,7 @@ fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:Stri
         val listState = rememberLazyListState()
         listState.OnBottomReached(buffer = 1) {
             // do on load more
+
             Log.d(
                 "Loading3",
                 listState.firstVisibleItemIndex.toString() + ">>>" + dataState.javaClass.name
