@@ -37,13 +37,15 @@ fun LazyListState.OnBottomReached(buffer : Int = 0,
 
     val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull() ?: return@derivedStateOf true
 
-     lastVisibleItem.index >= layoutInfo.totalItemsCount - 1 - buffer &&  layoutInfo.totalItemsCount>5
+            ((lastVisibleItem.index >= layoutInfo.totalItemsCount - 1 - buffer) &&  layoutInfo.totalItemsCount>5 && lastVisibleItem.index>8)
 
         }
     }
     LaunchedEffect(shouldLoadMore){
-        snapshotFlow{shouldLoadMore.value}.collect{
-            if(it) loadMore()
+
+            snapshotFlow { shouldLoadMore.value }.collect {
+                if (it) loadMore()
+
         }
     }
 }
@@ -54,6 +56,7 @@ fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:Stri
     val _newsListViewModel: NewsListViewModel = hiltViewModel()
     var dataState: NewsListState = _newsListViewModel.newsList.value
     val swipeRefreshState = rememberSwipeRefreshState(false)
+    var notFoundData = remember { mutableStateOf(false) }
     Log.d("Loading", dataState.javaClass.name)
     LaunchedEffect(state.value.text){
 
@@ -63,8 +66,10 @@ fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:Stri
         }
         _newsListViewModel.tmpNewsList?.let {
         if(state.value.text.length<=0 &&  it.response.results.size>0)
-        {
+        {   notFoundData.value = false
             _newsListViewModel.getNewsList(state.value.text)
+
+
         }
         }
         }
@@ -83,8 +88,9 @@ fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:Stri
                 "Loading3",
                 listState.firstVisibleItemIndex.toString() + ">>>" + dataState.javaClass.name
             )
-
-            _newsListViewModel.LoadMore(state.value.text)
+            if(!notFoundData.value) {
+                _newsListViewModel.LoadMore(state.value.text)
+            }
         }
 
         SwipeRefresh(
@@ -109,7 +115,6 @@ fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:Stri
 
                 when (dataState) {
                     is NewsListState.Loading -> {
-
                         dataState?.data?.response?.results?.let { list ->
                             items(list) {
 
@@ -171,6 +176,7 @@ fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:Stri
                     }
                     is NewsListState.Success -> {
                         swipeRefreshState.isRefreshing = false
+                        notFoundData.value = (dataState.data.response.total<=0)
                         dataState?.data?.response?.results?.let { list ->
 
                             items(list) {
