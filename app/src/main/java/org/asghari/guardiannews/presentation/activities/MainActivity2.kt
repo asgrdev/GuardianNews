@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.*
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material3.MaterialTheme
 
@@ -31,6 +32,7 @@ import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.runtime.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
@@ -70,6 +72,7 @@ class MainActivity2 : ComponentActivity() {
             Row(modifier = Modifier.padding(0.dp, 0.dp, 12.dp, 0.dp))
             {
                 BasicTextField(
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     value = state.value,
                     onValueChange = { value ->
                         state.value = value

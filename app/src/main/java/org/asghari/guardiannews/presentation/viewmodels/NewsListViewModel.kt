@@ -20,12 +20,15 @@ class NewsListViewModel @Inject constructor
     (private val lastNewsListUseCase: LastNewsListUseCase
     , private val searchInNewsListUseCase: SearchInNewsListUseCase
     ,private val getSelectedSectionsUseCase: GetSelectedSectionsUseCase
-):
-    ViewModel() {
+):ViewModel() {
 
     private val _newsList: MutableSharedFlow<NewsListState> =
         MutableStateFlow(NewsListState.Loading("", null))
     val newsList = mutableStateOf<NewsListState>(NewsListState.Loading("", null))
+
+    private val _SelectedSectionsList: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
+    val selectedSectionsList = mutableStateOf<List<String>>(listOf())
+
     lateinit var call: NewsList
 
     var tmpNewsList: NewsList? = null
@@ -43,9 +46,11 @@ class NewsListViewModel @Inject constructor
             _newsList.emit(NewsListState.Loading("", null))
             getSelectedSectionsUseCase().collect{
                 var sectionQuery:String = ""
-                if(it.length>0)
-                    sectionQuery = it.replace(",","|").substring(1)
-
+                if(it.length>0) {
+                    sectionQuery = it.replace(",", "|").substring(1)
+                    _SelectedSectionsList.value = (sectionQuery.split("|"))
+                    selectedSectionsList.value = _SelectedSectionsList.value;
+                }
                 if (query.equals("")) {
                     call = lastNewsListUseCase(sections = sectionQuery)
                 } else {
@@ -77,9 +82,11 @@ class NewsListViewModel @Inject constructor
             _newsList.emit(NewsListState.Loading("", tmpNewsList))
             getSelectedSectionsUseCase().collect {
                 var sectionQuery:String = ""
-                if(it.length>0)
-                   sectionQuery = it.replace(",","|").substring(1)
-
+                if(it.length>0) {
+                    sectionQuery = it.replace(",", "|").substring(1)
+                    _SelectedSectionsList.value = (sectionQuery.split("|"))
+                    selectedSectionsList.value = _SelectedSectionsList.value;
+                }
                 if (query.equals("")) {
                     call = lastNewsListUseCase(current_page,sectionQuery);
                 } else {

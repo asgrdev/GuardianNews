@@ -3,21 +3,22 @@ package org.asghari.guardiannews.presentation.composableviews
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
@@ -26,7 +27,10 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import org.asghari.guardiannews.other.NewsListState
 import org.asghari.guardiannews.other.LoadMoreLoading
+import org.asghari.guardiannews.presentation.ui.RoundedCheckView
 import org.asghari.guardiannews.presentation.viewmodels.NewsListViewModel
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun LazyListState.OnBottomReached(buffer : Int = 0,
@@ -51,36 +55,39 @@ fun LazyListState.OnBottomReached(buffer : Int = 0,
 }
 
 @Composable
+
 fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:String?) -> Unit) {
 
     val _newsListViewModel: NewsListViewModel = hiltViewModel()
     var dataState: NewsListState = _newsListViewModel.newsList.value
     val swipeRefreshState = rememberSwipeRefreshState(false)
     var notFoundData = remember { mutableStateOf(false) }
-    Log.d("Loading", dataState.javaClass.name)
+    var selectedSectionslist:List<String> = _newsListViewModel.selectedSectionsList.value
+    val encodedSearchText = URLEncoder.encode(state.value.text, StandardCharsets.UTF_8.toString())
     LaunchedEffect(state.value.text){
 
-        if(!_newsListViewModel.currentSearchQuery.equals(state.value.text)){
-        if(state.value.text.length>=3) {
-                _newsListViewModel.getNewsList(state.value.text)
+        if(!_newsListViewModel.currentSearchQuery.equals(encodedSearchText)){
+        if(encodedSearchText.length>=3) {
+                _newsListViewModel.getNewsList(encodedSearchText)
         }
         _newsListViewModel.tmpNewsList?.let {
-        if(state.value.text.length<=0 &&  it.response.results.size>0)
+        if(encodedSearchText.length<=2 &&  it.response.results.size>0)
         {   notFoundData.value = false
-            _newsListViewModel.getNewsList(state.value.text)
-
-
+            _newsListViewModel.getNewsList(encodedSearchText)
         }
         }
         }
     }
+    val sectionslistState = rememberLazyListState()
+
     Box(
         modifier = Modifier
-            .background(Color.White)
+            .background(Color.Transparent)
             .padding(0.dp)
             .fillMaxSize(), contentAlignment = Alignment.Center
     ) {
         val listState = rememberLazyListState()
+
         listState.OnBottomReached(buffer = 1) {
             // do on load more
 
@@ -88,15 +95,55 @@ fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:Stri
                 "Loading3",
                 listState.firstVisibleItemIndex.toString() + ">>>" + dataState.javaClass.name
             )
-            if(!notFoundData.value) {
-                _newsListViewModel.LoadMore(state.value.text)
+            if (!notFoundData.value) {
+                _newsListViewModel.LoadMore(encodedSearchText)
             }
         }
+Column {
+
+    Box ( modifier = Modifier
+        .background(Color.White)
+        .padding(0.dp)
+        .fillMaxSize()){
+        LazyRow(
+            state = sectionslistState,
+            modifier = Modifier
+                .height(48.dp)
+                .align(Alignment.Center)
+                .fillMaxWidth()
+                .padding(6.dp)
+                .background(Color(0xfffdfdfd)),
+        )
+        {
+           items(selectedSectionslist){ section ->
+               Row(
+                   modifier = Modifier
+                       .padding(horizontal = 2.dp, vertical = 2.dp)
+                       .clip(shape = RoundedCornerShape(17.dp))
+                       .background(
+                           Color(0xfffdfdfd)
+                       )
+                       .border(
+                           1.dp,
+                           Color.LightGray,
+                           shape = RoundedCornerShape(17.dp)
+                       )
+                       .padding(horizontal = 3.dp, vertical = 2.dp)
+
+               )
+               {
+                   RoundedCheckView(section, true, ontoggleSection = { a, b -> })
+               }
+           }
+
+            }
+        }
+    }
 
         SwipeRefresh(
             state = swipeRefreshState,
             onRefresh = {
-                _newsListViewModel.getNewsList(state.value.text)
+                _newsListViewModel.getNewsList(encodedSearchText)
                 swipeRefreshState.isRefreshing = true
             },
         )
@@ -107,6 +154,7 @@ fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:Stri
                     .wrapContentHeight()
                     .fillMaxWidth()
                     .padding(4.dp)
+                    .padding(0.dp, 45.dp, 0.dp, 0.dp)
                     .background(Color(0xfffafafa)),
                 verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.End,
@@ -220,9 +268,7 @@ fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:Stri
                                     )
                                 }
                             }
-
                         }
-
                     }
                     is NewsListState.Error -> {
                         Log.d("Error", "---")
@@ -230,6 +276,7 @@ fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:Stri
                 }
             }
         }
+
     }
-}
+    }
 
