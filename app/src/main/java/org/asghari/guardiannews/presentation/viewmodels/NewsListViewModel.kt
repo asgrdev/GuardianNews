@@ -39,75 +39,99 @@ class NewsListViewModel @Inject constructor
         getNewsList()
     }
 
-    fun getNewsList(query: String = "") {
+    fun getNewsList(query: String = "",sections:String="") {
         current_page = 1
         currentSearchQuery = query
         viewModelScope.launch {
             _newsList.emit(NewsListState.Loading("", null))
-            getSelectedSectionsUseCase().collect{
-                var sectionQuery:String = ""
-                if(it.length>0) {
-                    sectionQuery = it.replace(",", "|").substring(1)
-                    _SelectedSectionsList.value = (sectionQuery.split("|"))
-                    selectedSectionsList.value = _SelectedSectionsList.value;
+            if (sections.equals("")) {
+                getSelectedSectionsUseCase().collect {
+                    getList(query, it)
                 }
-                if (query.equals("")) {
-                    call = lastNewsListUseCase(sections = sectionQuery)
-                } else {
-                    call = searchInNewsListUseCase(query,sectionQuery, current_page);
-                }
-                call?.let {
-                    if (it == null) {
-                        _newsList.emit(NewsListState.Error("Error!!", null))
-                    } else {
-                        tmpNewsList = it
-                        _newsList.emit(NewsListState.Success("", it))
-
-                    }
-                    _newsList.collectLatest {
-                        newsList.value = it
-                    }
-
-                }
+            } else {
+                getList(query, sections)
             }
 
         }
 
     }
+suspend fun getList(query: String="" ,sections:String="")
+{
+    var sectionQuery:String = ""
+    if(sections.length>0) {
+        sectionQuery = sections.replace(",", "|")
+        if(sectionQuery.substring(0,1).equals("|")) {
+            sectionQuery = sectionQuery.substring(1)
+        }
+        _SelectedSectionsList.value = (sectionQuery.split("|"))
+        selectedSectionsList.value = _SelectedSectionsList.value;
+    }
+    if (query.equals("")) {
+        call = lastNewsListUseCase(sections = sectionQuery)
+    } else {
+        call = searchInNewsListUseCase(query,sectionQuery, current_page);
+    }
+    call?.let {
+        if (it == null) {
+            _newsList.emit(NewsListState.Error("Error!!", null))
+        } else {
+            tmpNewsList = it
+            _newsList.emit(NewsListState.Success("", it))
 
-    fun LoadMore(query: String = "") {
+        }
+        _newsList.collectLatest {
+            newsList.value = it
+        }
+
+    }
+}
+
+    fun LoadMore(query: String = "",sections:String="") {
         current_page++
         currentSearchQuery = query
          viewModelScope.launch {
             _newsList.emit(NewsListState.Loading("", tmpNewsList))
-            getSelectedSectionsUseCase().collect {
-                var sectionQuery:String = ""
-                if(it.length>0) {
-                    sectionQuery = it.replace(",", "|").substring(1)
-                    _SelectedSectionsList.value = (sectionQuery.split("|"))
-                    selectedSectionsList.value = _SelectedSectionsList.value;
-                }
-                if (query.equals("")) {
-                    call = lastNewsListUseCase(current_page,sectionQuery);
-                } else {
-                    call = searchInNewsListUseCase(query,sectionQuery, current_page);
-                }
-                call?.let {
+             if (sections.equals("")) {
+                 getSelectedSectionsUseCase().collect {
+                     getLoadMoreList(query, it)
+                 }
+             } else {
+                 getLoadMoreList(query, sections)
 
-                    try {
-                        tmpNewsList?.let { tmpedNewsList ->
-                            tmpedNewsList.response.results += it.response.results
-                            _newsList.emit(NewsListState.Success("", tmpedNewsList))
-                        }
-                    } catch (e: HttpException) {
-                        _newsList.emit(NewsListState.Error("Error!!", null))
-                    }
-                }
-                _newsList.collectLatest {
-                    newsList.value = it
-                }
-            }
+             }
         }
 
+    }
+
+   suspend fun getLoadMoreList(query: String = "",sections:String="")
+    {
+        var sectionQuery:String = ""
+        if(sections.length>0) {
+            sectionQuery = sections.replace(",", "|")
+            if(sectionQuery.substring(0,1).equals("|")) {
+                sectionQuery = sectionQuery.substring(1)
+            }
+            _SelectedSectionsList.value = (sectionQuery.split("|"))
+            selectedSectionsList.value = _SelectedSectionsList.value;
+        }
+        if (query.equals("")) {
+            call = lastNewsListUseCase(current_page,sectionQuery);
+        } else {
+            call = searchInNewsListUseCase(query,sectionQuery, current_page);
+        }
+        call?.let {
+
+            try {
+                tmpNewsList?.let { tmpedNewsList ->
+                    tmpedNewsList.response.results += it.response.results
+                    _newsList.emit(NewsListState.Success("", tmpedNewsList))
+                }
+            } catch (e: HttpException) {
+                _newsList.emit(NewsListState.Error("Error!!", null))
+            }
+        }
+        _newsList.collectLatest {
+            newsList.value = it
+        }
     }
 }

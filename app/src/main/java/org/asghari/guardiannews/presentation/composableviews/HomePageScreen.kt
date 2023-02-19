@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
@@ -63,6 +64,7 @@ fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:Stri
     val swipeRefreshState = rememberSwipeRefreshState(false)
     var notFoundData = remember { mutableStateOf(false) }
     var selectedSectionslist:List<String> = _newsListViewModel.selectedSectionsList.value
+    var SectionsToShow = selectedSectionslist.toString().replace("[","").replace("]","")
     val encodedSearchText = URLEncoder.encode(state.value.text, StandardCharsets.UTF_8.toString())
     LaunchedEffect(state.value.text){
 
@@ -99,184 +101,187 @@ fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:Stri
                 _newsListViewModel.LoadMore(encodedSearchText)
             }
         }
-Column {
+Column(modifier = Modifier.align(Alignment.TopStart)) {
 
-    Box ( modifier = Modifier
-        .background(Color.White)
-        .padding(0.dp)
-        .fillMaxSize()){
+    Box(
+        modifier = Modifier
+            .background(Color.White)
+            .padding(0.dp)
+            .fillMaxWidth()
+    ) {
         LazyRow(
             state = sectionslistState,
-            modifier = Modifier
+            modifier = Modifier.align(Alignment.TopStart)
                 .height(48.dp)
                 .align(Alignment.Center)
                 .fillMaxWidth()
-                .padding(6.dp)
+                .padding(6.dp, 6.dp, 6.dp, 1.dp)
                 .background(Color(0xfffdfdfd)),
         )
         {
-           items(selectedSectionslist){ section ->
-               Row(
-                   modifier = Modifier
-                       .padding(horizontal = 2.dp, vertical = 2.dp)
-                       .clip(shape = RoundedCornerShape(17.dp))
-                       .background(
-                           Color(0xfffdfdfd)
-                       )
-                       .border(
-                           1.dp,
-                           Color.LightGray,
-                           shape = RoundedCornerShape(17.dp)
-                       )
-                       .padding(horizontal = 3.dp, vertical = 2.dp)
+            items(selectedSectionslist) { section ->
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 2.dp, vertical = 2.dp)
+                        .clip(shape = RoundedCornerShape(17.dp))
+                        .background(
+                            Color(0xfffdfdfd)
+                        )
+                        .border(
+                            1.dp,
+                            Color.LightGray,
+                            shape = RoundedCornerShape(17.dp)
+                        )
+                        .padding(horizontal = 3.dp, vertical = 2.dp)
 
-               )
-               {
-                   RoundedCheckView(section, true, ontoggleSection = { a, b -> })
-               }
-           }
+                )
+                {
+                    RoundedCheckView(section, true, ontoggleSection = { a, b ->
 
+                    })
+                }
             }
+
         }
     }
 
-        SwipeRefresh(
-            state = swipeRefreshState,
-            onRefresh = {
-                _newsListViewModel.getNewsList(encodedSearchText)
-                swipeRefreshState.isRefreshing = true
-            },
-        )
-        {
 
-            LazyColumn(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .fillMaxWidth()
-                    .padding(4.dp)
-                    .padding(0.dp, 45.dp, 0.dp, 0.dp)
-                    .background(Color(0xfffafafa)),
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.End,
-                state = listState
-            ) {
+    SwipeRefresh(
+        state = swipeRefreshState,
+        onRefresh = {
+            _newsListViewModel.getNewsList(encodedSearchText)
+            swipeRefreshState.isRefreshing = true
+        },
+    )
+    {
 
-                when (dataState) {
-                    is NewsListState.Loading -> {
-                        dataState?.data?.response?.results?.let { list ->
-                            items(list) {
+        LazyColumn(
+            modifier = Modifier
+                .wrapContentHeight()
+                .fillMaxWidth()
+                .padding(4.dp)
+                .background(Color(0xfffafafa)),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.End,
+            state = listState
+        ) {
 
-                                Column(
-                                    modifier = Modifier.clickable(onClick = {
+            when (dataState) {
+                is NewsListState.Loading -> {
+                    dataState?.data?.response?.results?.let { list ->
+                        items(list) {
 
-                                        onNavigation(it.id)
-                                    })
-                                ) {
-                                    Image(
-                                        painter = rememberAsyncImagePainter(
-                                            ImageRequest.Builder(LocalContext.current)
-                                                .data(data = it.fields.thumbnail)
-                                                .allowHardware(false)
-                                                .build()
-                                        ),
-                                        contentDescription = it.webTitle,
-                                        modifier = Modifier
-                                            .background(Color.LightGray)
-                                            .wrapContentSize()
-                                            .height(212.dp)
-                                            .fillMaxSize()
-                                    )
-                                    Text(
-                                        text = it.webTitle, color = Color.Gray,
-                                        modifier = Modifier.padding(horizontal = 10.dp),
-                                        style = MaterialTheme.typography.body2,
-                                        textAlign = TextAlign.Start
-                                    )
-                                    Text(
-                                        text = it.webPublicationDate, color = Color.Gray,
-                                        modifier = Modifier.padding(horizontal = 10.dp),
-                                        style = MaterialTheme.typography.caption,
-                                        textAlign = TextAlign.Start
-                                    )
+                            Column(
+                                modifier = Modifier.clickable(onClick = {
 
-                                    Spacer(
-                                        modifier = Modifier
-                                            .height(38.dp)
-                                            .background(color = Color.Blue)
-                                    )
-                                }
-                            }
+                                    onNavigation(it.id)
+                                })
+                            ) {
+                                Image(
+                                    painter = rememberAsyncImagePainter(
+                                        ImageRequest.Builder(LocalContext.current)
+                                            .data(data = it.fields.thumbnail)
+                                            .allowHardware(false)
+                                            .build()
+                                    ),
+                                    contentDescription = it.webTitle,
+                                    modifier = Modifier
+                                        .background(Color.LightGray)
+                                        .wrapContentSize()
+                                        .height(212.dp)
+                                        .fillMaxSize()
+                                )
+                                Text(
+                                    text = it.webTitle, color = Color.Gray,
+                                    modifier = Modifier.padding(horizontal = 10.dp),
+                                    style = MaterialTheme.typography.body2,
+                                    textAlign = TextAlign.Start
+                                )
+                                Text(
+                                    text = it.webPublicationDate, color = Color.Gray,
+                                    modifier = Modifier.padding(horizontal = 10.dp),
+                                    style = MaterialTheme.typography.caption,
+                                    textAlign = TextAlign.Start
+                                )
 
-                        }
-                        if (swipeRefreshState.isRefreshing == false) {
-                            item {
-                                Column(
-                                    modifier = Modifier.fillMaxSize(),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    LoadMoreLoading()
-                                }
-
+                                Spacer(
+                                    modifier = Modifier
+                                        .height(38.dp)
+                                        .background(color = Color.Blue)
+                                )
                             }
                         }
 
                     }
-                    is NewsListState.Success -> {
-                        swipeRefreshState.isRefreshing = false
-                        notFoundData.value = (dataState.data.response.total<=0)
-                        dataState?.data?.response?.results?.let { list ->
+                    if (swipeRefreshState.isRefreshing == false) {
+                        item {
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                LoadMoreLoading()
+                            }
 
-                            items(list) {
-                                Column(
-                                    modifier = Modifier.clickable(onClick = {
+                        }
+                    }
 
-                                        onNavigation(it.id)
-                                    })
-                                ) {
-                                    Image(
-                                        painter = rememberAsyncImagePainter(
-                                            ImageRequest.Builder(LocalContext.current)
-                                                .data(data = it.fields.thumbnail)
-                                                .allowHardware(false)
-                                                .build()
-                                        ),
-                                        contentDescription = it.webTitle,
-                                        modifier = Modifier
-                                            .background(Color.LightGray)
-                                            .wrapContentSize()
-                                            .height(212.dp)
-                                            .fillMaxSize()
-                                    )
-                                    Text(
-                                        text = it.webTitle, color = Color.Gray,
-                                        modifier = Modifier.padding(horizontal = 10.dp),
-                                        style = MaterialTheme.typography.body2,
-                                        textAlign = TextAlign.Start
-                                    )
-                                    Text(
-                                        text = it.webPublicationDate, color = Color.Gray,
-                                        modifier = Modifier.padding(horizontal = 10.dp),
-                                        style = MaterialTheme.typography.caption,
-                                        textAlign = TextAlign.Start
-                                    )
+                }
+                is NewsListState.Success -> {
+                    swipeRefreshState.isRefreshing = false
+                    notFoundData.value = (dataState.data.response.total <= 0)
+                    dataState?.data?.response?.results?.let { list ->
 
-                                    Spacer(
-                                        modifier = Modifier
-                                            .height(38.dp)
-                                            .background(color = Color.Blue)
-                                    )
-                                }
+                        items(list) {
+                            Column(
+                                modifier = Modifier.clickable(onClick = {
+
+                                    onNavigation(it.id)
+                                })
+                            ) {
+                                Image(
+                                    painter = rememberAsyncImagePainter(
+                                        ImageRequest.Builder(LocalContext.current)
+                                            .data(data = it.fields.thumbnail)
+                                            .allowHardware(false)
+                                            .build()
+                                    ),
+                                    contentDescription = it.webTitle,
+                                    modifier = Modifier
+                                        .background(Color.LightGray)
+                                        .wrapContentSize()
+                                        .height(212.dp)
+                                        .fillMaxSize()
+                                )
+                                Text(
+                                    text = it.webTitle, color = Color.Gray,
+                                    modifier = Modifier.padding(horizontal = 10.dp),
+                                    style = MaterialTheme.typography.body2,
+                                    textAlign = TextAlign.Start
+                                )
+                                Text(
+                                    text = it.webPublicationDate, color = Color.Gray,
+                                    modifier = Modifier.padding(horizontal = 10.dp),
+                                    style = MaterialTheme.typography.caption,
+                                    textAlign = TextAlign.Start
+                                )
+
+                                Spacer(
+                                    modifier = Modifier
+                                        .height(38.dp)
+                                        .background(color = Color.Blue)
+                                )
                             }
                         }
                     }
-                    is NewsListState.Error -> {
-                        Log.d("Error", "---")
-                    }
+                }
+                is NewsListState.Error -> {
+                    Log.d("Error", "---")
                 }
             }
         }
-
     }
+}
     }
+}
 
