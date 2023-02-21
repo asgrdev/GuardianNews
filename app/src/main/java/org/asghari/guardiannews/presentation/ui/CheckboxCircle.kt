@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun RoundedCheckView(Checkboxtext:String, isSelected:Boolean=false, ontoggleSection:(isChecked:Boolean,sectionId:String)-> Unit) {
+fun RoundedCheckView(Checkboxtext:String, isSelected:Boolean=false, ontoggleSection:(isChecked:Boolean,sectionId:String)-> Boolean) {
     val isChecked = remember { mutableStateOf(isSelected) }
     val checkedText = remember { mutableStateOf(Checkboxtext) }
     val circleSize = remember { mutableStateOf(18.dp) }
@@ -29,10 +29,14 @@ fun RoundedCheckView(Checkboxtext:String, isSelected:Boolean=false, ontoggleSect
     val color = remember { mutableStateOf(Color.DarkGray) }
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(5.dp,2.dp)
+        modifier = Modifier.padding(5.dp, 2.dp)
             .toggleable(value = isChecked.value, role = Role.Checkbox) {
-                isChecked.value = it
-                ontoggleSection(isChecked.value,checkedText.value)
+                var toggled: Boolean = ontoggleSection(isChecked.value, checkedText.value)
+                if (toggled) {
+                    isChecked.value = it
+                } else {
+                    isChecked.value = true
+                }
                 if (isChecked.value) {
                     circleSize.value = 18.dp
                     circleThickness.value = 2.dp
@@ -68,5 +72,4 @@ fun RoundedCheckView(Checkboxtext:String, isSelected:Boolean=false, ontoggleSect
             modifier = Modifier.padding(start = 5.dp)
         )
     }
-
 }

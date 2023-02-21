@@ -47,10 +47,8 @@ fun LazyListState.OnBottomReached(buffer : Int = 0,
         }
     }
     LaunchedEffect(shouldLoadMore){
-
-            snapshotFlow { shouldLoadMore.value }.collect {
+        snapshotFlow { shouldLoadMore.value }.collect {
                 if (it) loadMore()
-
         }
     }
 }
@@ -64,22 +62,24 @@ fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:Stri
     val swipeRefreshState = rememberSwipeRefreshState(false)
     var notFoundData = remember { mutableStateOf(false) }
     var selectedSectionslist:List<String> = _newsListViewModel.selectedSectionsList.value
-    var SectionsToShow = selectedSectionslist.toString().replace("[","").replace("]","")
+    var sectionsToShow = _newsListViewModel.sectionsToShow
     val encodedSearchText = URLEncoder.encode(state.value.text, StandardCharsets.UTF_8.toString())
     LaunchedEffect(state.value.text){
-
+        var sectionsString = sectionsToShow.value.toString().replace("[","").replace("]","")
         if(!_newsListViewModel.currentSearchQuery.equals(encodedSearchText)){
-        if(encodedSearchText.length>=3) {
-                _newsListViewModel.getNewsList(encodedSearchText)
-        }
-        _newsListViewModel.tmpNewsList?.let {
-        if(encodedSearchText.length<=2 &&  it.response.results.size>0)
-        {   notFoundData.value = false
-            _newsListViewModel.getNewsList(encodedSearchText)
-        }
-        }
+            if(encodedSearchText.length>=3) {
+                _newsListViewModel.getNewsList(encodedSearchText,sectionsString)
+            }
+            _newsListViewModel.tmpNewsList?.let {
+                if(encodedSearchText.length<=2 &&  it.response.results.size>0)
+                {   notFoundData.value = false
+                    _newsListViewModel.getNewsList(encodedSearchText,sectionsString)
+                }
+            }
         }
     }
+
+
     val sectionslistState = rememberLazyListState()
 
     Box(
@@ -89,16 +89,16 @@ fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:Stri
             .fillMaxSize(), contentAlignment = Alignment.Center
     ) {
         val listState = rememberLazyListState()
-
         listState.OnBottomReached(buffer = 1) {
             // do on load more
-
             Log.d(
                 "Loading3",
                 listState.firstVisibleItemIndex.toString() + ">>>" + dataState.javaClass.name
             )
             if (!notFoundData.value) {
-                _newsListViewModel.LoadMore(encodedSearchText)
+                var sectionsString = sectionsToShow.value.toString().replace("[","").replace("]","")
+                Log.d(">>>>>",sectionsString,)
+                _newsListViewModel.LoadMore(encodedSearchText,sectionsString)
             }
         }
 Column(modifier = Modifier.align(Alignment.TopStart)) {
@@ -136,9 +136,35 @@ Column(modifier = Modifier.align(Alignment.TopStart)) {
 
                 )
                 {
-                    RoundedCheckView(section, true, ontoggleSection = { a, b ->
+                        var isSelected =  false
+                        if(sectionsToShow.value.indexOf(section.trim())>-1){
+                            isSelected =true
+                        }
 
-                    })
+                        RoundedCheckView(section, isSelected, ontoggleSection = { isChecked, sectionId ->
+                            if(!isChecked)
+                            {
+                                _newsListViewModel.addSectionToShow(
+                                    !isChecked,
+                                    section,
+                                    encodedSearchText
+                                )
+                                return@RoundedCheckView true
+                            }
+                            else if(sectionsToShow.value.size<=1 && isChecked) {
+                                return@RoundedCheckView false
+                            }
+                            else{
+                                _newsListViewModel.addSectionToShow(
+                                    !isChecked,
+                                    section,
+                                    encodedSearchText
+                                )
+                                return@RoundedCheckView true
+                            }
+
+                        })
+
                 }
             }
 
@@ -149,7 +175,10 @@ Column(modifier = Modifier.align(Alignment.TopStart)) {
     SwipeRefresh(
         state = swipeRefreshState,
         onRefresh = {
-            _newsListViewModel.getNewsList(encodedSearchText)
+            var sectionsString = sectionsToShow.value.toString().replace("[","").replace("]","")
+            Log.d(">>>>>",sectionsString,)
+
+            _newsListViewModel.getNewsList(encodedSearchText,sectionsString)
             swipeRefreshState.isRefreshing = true
         },
     )
@@ -283,5 +312,6 @@ Column(modifier = Modifier.align(Alignment.TopStart)) {
     }
 }
     }
-}
+    }
+
 

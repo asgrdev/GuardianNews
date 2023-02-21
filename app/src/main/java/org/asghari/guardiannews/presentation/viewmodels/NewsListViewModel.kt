@@ -1,6 +1,7 @@
 package org.asghari.guardiannews.presentation.viewmodels
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,6 +30,10 @@ class NewsListViewModel @Inject constructor
     private val _SelectedSectionsList: MutableStateFlow<List<String>> = MutableStateFlow(listOf())
     val selectedSectionsList = mutableStateOf<List<String>>(listOf())
 
+    private val _SectionsToShow:MutableStateFlow<MutableList<String>> = MutableStateFlow(mutableListOf())
+    val  sectionsToShow = mutableStateOf<List<String>>(listOf())
+
+
     lateinit var call: NewsList
 
     var tmpNewsList: NewsList? = null
@@ -39,32 +44,67 @@ class NewsListViewModel @Inject constructor
         getNewsList()
     }
 
+   fun addSectionToShow( isChecked:Boolean, section:String,searchText:String){
+       if(isChecked) {
+           _SectionsToShow.value.add(section.trim())
+       }
+       else {
+         _SectionsToShow.value.remove(section.trim())
+       }
+       sectionsToShow.value =  _SectionsToShow.value
+       var sectionsString = sectionsToShow.value.toString().replace("[","").replace("]","")
+
+       getNewsList(searchText,sectionsString)
+
+       Log.d(">>>>>->>", sectionsString)
+   }
+
     fun getNewsList(query: String = "",sections:String="") {
         current_page = 1
         currentSearchQuery = query
+        Log.d(">>>>>>->",sections)
         viewModelScope.launch {
             _newsList.emit(NewsListState.Loading("", null))
             if (sections.equals("")) {
                 getSelectedSectionsUseCase().collect {
-                    getList(query, it)
+                    getList(query,true, it)
                 }
             } else {
-                getList(query, sections)
+                getList(query,false, sections)
             }
 
         }
 
     }
-suspend fun getList(query: String="" ,sections:String="")
+suspend fun getList(query: String="", fromDataStore:Boolean=false ,sections:String="")
 {
     var sectionQuery:String = ""
+    if(fromDataStore){
     if(sections.length>0) {
         sectionQuery = sections.replace(",", "|")
         if(sectionQuery.substring(0,1).equals("|")) {
             sectionQuery = sectionQuery.substring(1)
         }
         _SelectedSectionsList.value = (sectionQuery.split("|"))
+        _SectionsToShow.value.clear()
+        _SelectedSectionsList.value.forEach{
+            _SectionsToShow.value.add(it.trim())
+        }
+        sectionsToShow.value =  _SectionsToShow.value
         selectedSectionsList.value = _SelectedSectionsList.value;
+    }
+    }
+    else{
+        if(sections.length>0) {
+            sectionQuery = sections.replace(",", "|")
+            if(sectionQuery.substring(0,1).equals("|")) {
+                sectionQuery = sectionQuery.substring(1)
+            }
+            _SectionsToShow.value.clear()
+            sectionQuery.split("|").forEach{
+                _SectionsToShow.value.add(it.trim())
+            }
+        }
     }
     if (query.equals("")) {
         call = lastNewsListUseCase(sections = sectionQuery)
@@ -93,26 +133,47 @@ suspend fun getList(query: String="" ,sections:String="")
             _newsList.emit(NewsListState.Loading("", tmpNewsList))
              if (sections.equals("")) {
                  getSelectedSectionsUseCase().collect {
-                     getLoadMoreList(query, it)
+                     getLoadMoreList(query,true, it)
                  }
              } else {
-                 getLoadMoreList(query, sections)
+                 getLoadMoreList(query,false, sections)
 
              }
         }
 
     }
 
-   suspend fun getLoadMoreList(query: String = "",sections:String="")
+   suspend fun getLoadMoreList(query: String = "" , fromDataStore:Boolean=false,sections:String="")
     {
         var sectionQuery:String = ""
-        if(sections.length>0) {
-            sectionQuery = sections.replace(",", "|")
-            if(sectionQuery.substring(0,1).equals("|")) {
-                sectionQuery = sectionQuery.substring(1)
+        if(fromDataStore){
+            if(sections.length>0) {
+                sectionQuery = sections.replace(",", "|")
+                if(sectionQuery.substring(0,1).equals("|")) {
+                    sectionQuery = sectionQuery.substring(1)
+                }
+                _SelectedSectionsList.value = (sectionQuery.split("|"))
+                _SectionsToShow.value.clear()
+                _SelectedSectionsList.value.forEach{
+                    _SectionsToShow.value.add(it.trim())
+                }
+                sectionsToShow.value =  _SectionsToShow.value
+                selectedSectionsList.value = _SelectedSectionsList.value;
             }
-            _SelectedSectionsList.value = (sectionQuery.split("|"))
-            selectedSectionsList.value = _SelectedSectionsList.value;
+        }
+        else{
+            if(sections.length>0) {
+                sectionQuery = sections.replace(",", "|")
+                if(sectionQuery.substring(0,1).equals("|")) {
+                    sectionQuery = sectionQuery.substring(1)
+                }
+
+                _SectionsToShow.value.clear()
+                sectionQuery.split("|").forEach{
+                    _SectionsToShow.value.add(it.trim())
+                }
+
+            }
         }
         if (query.equals("")) {
             call = lastNewsListUseCase(current_page,sectionQuery);

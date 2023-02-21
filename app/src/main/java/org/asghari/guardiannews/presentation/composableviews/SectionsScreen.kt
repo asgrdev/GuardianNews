@@ -96,11 +96,13 @@ fun SectionsScreen() {
                                 }
 
                                 RoundedCheckView("${item.id}" , sectionState , ontoggleSection =  { isChecked, sectionId ->
-                                    sectionsViewModel.toggleSelectedSection(isChecked,sectionId)
-                                    if(isChecked)
+                                    sectionsViewModel.toggleSelectedSection(!isChecked,sectionId)
+                                    if(!isChecked)
                                         currentSelectedSectionsCount.value++
                                     else
                                         currentSelectedSectionsCount.value--
+
+                                    return@RoundedCheckView true
                             })
 
                             }
