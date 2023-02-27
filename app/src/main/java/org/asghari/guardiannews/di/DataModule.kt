@@ -4,8 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.test.moviehub.domain.exceptions.IErrorHandler
-import dagger.Module
+ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -20,6 +19,7 @@ import org.asghari.guardiannews.data.remote.apiservices.SectionsApiService
 import org.asghari.guardiannews.data.repository.GuardianNewsRepositoryImp
 import org.asghari.guardiannews.data.repository.SectionsRepositoryImp
 import org.asghari.guardiannews.data.repository.SettingsRepositoryImpl
+import org.asghari.guardiannews.domain.exceptions.IErrorHandler
 import org.asghari.guardiannews.domain.repositories.GuardianNewsRepository
 import org.asghari.guardiannews.domain.repositories.SectionsRepository
 import org.asghari.guardiannews.domain.repositories.SettingsRepository

@@ -91,14 +91,10 @@ fun HomePageScreen(state: MutableState<TextFieldValue>,onNavigation:(newsId:Stri
         val listState = rememberLazyListState()
         listState.OnBottomReached(buffer = 1) {
             // do on load more
-            Log.d(
-                "Loading3",
-                listState.firstVisibleItemIndex.toString() + ">>>" + dataState.javaClass.name
-            )
+
             if (!notFoundData.value) {
                 var sectionsString = sectionsToShow.value.toString().replace("[","").replace("]","")
-                Log.d(">>>>>",sectionsString,)
-                _newsListViewModel.LoadMore(encodedSearchText,sectionsString)
+                 _newsListViewModel.LoadMore(encodedSearchText,sectionsString)
             }
         }
 Column(modifier = Modifier.align(Alignment.TopStart)) {
@@ -164,7 +160,6 @@ Column(modifier = Modifier.align(Alignment.TopStart)) {
                             }
 
                         })
-
                 }
             }
 
@@ -176,7 +171,6 @@ Column(modifier = Modifier.align(Alignment.TopStart)) {
         state = swipeRefreshState,
         onRefresh = {
             var sectionsString = sectionsToShow.value.toString().replace("[","").replace("]","")
-            Log.d(">>>>>",sectionsString,)
 
             _newsListViewModel.getNewsList(encodedSearchText,sectionsString)
             swipeRefreshState.isRefreshing = true
@@ -202,7 +196,6 @@ Column(modifier = Modifier.align(Alignment.TopStart)) {
 
                             Column(
                                 modifier = Modifier.clickable(onClick = {
-
                                     onNavigation(it.id)
                                 })
                             ) {

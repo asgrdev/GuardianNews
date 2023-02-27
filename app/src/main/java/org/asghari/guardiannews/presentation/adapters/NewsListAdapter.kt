@@ -27,7 +27,6 @@ class NewsListAdapter @Inject constructor():
         override fun onBindViewHolder(holder: NewsListViewHolder, position: Int) {
                 val item = getItem(position)
                  item?.let {
-                        Log.d(">>>>>>>>>>>bbbb",it.toString());
                          Glide.with(holder.itemView).load(item.fields.thumbnail).into( holder.binding.newsThumb)
                          holder.binding.newsTitle.text = item.webTitle
                          holder.binding.newsPublishDate.text = item.webPublicationDate
@@ -38,22 +37,15 @@ class NewsListAdapter @Inject constructor():
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsListViewHolder {
-                Log.d(">>>>>>>>>>>bbbb2","CCCCCreated");
                 var holder = NewsListViewHolder(NewsListItemBinding.inflate(LayoutInflater.from(parent.context)
                         ,parent,false))
 
             return holder
         }
 
-
-
-
         inner class NewsListViewHolder(val binding:NewsListItemBinding):
                 RecyclerView.ViewHolder(binding.root){
-
-
         }
-
 
         object diffCallback:DiffUtil.ItemCallback<Result>(){
                 override fun areItemsTheSame(oldItem: Result, newItem: Result): Boolean {

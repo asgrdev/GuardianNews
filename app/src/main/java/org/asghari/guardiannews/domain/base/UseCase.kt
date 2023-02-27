@@ -1,6 +1,6 @@
-package com.test.moviehub.domain.base
+package org.asghari.guardiannews.domain.base
 
-import com.test.moviehub.domain.exceptions.IErrorHandler
+import org.asghari.guardiannews.domain.exceptions.IErrorHandler
 import kotlinx.coroutines.CancellationException
 
 abstract class UseCase<Response, Params>(private val errorHandler: IErrorHandler) {

@@ -1,4 +1,4 @@
-package com.test.moviehub.domain.exceptions
+package org.asghari.guardiannews.domain.exceptions
 
 private const val NO_CONNECTION_ERROR_MESSAGE = "NO_CONNECTION_ERROR_MESSAGE"
 private const val BAD_RESPONSE_ERROR_MESSAGE = "BAD_RESPONSE_ERROR_MESSAGE"

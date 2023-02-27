@@ -1,6 +1,6 @@
-package com.test.moviehub.domain.base
+package org.asghari.guardiannews.domain.base
 
-import com.test.moviehub.domain.exceptions.ErrorModel
+import org.asghari.guardiannews.domain.exceptions.ErrorModel
 
 interface UseCaseCallback<Type> {
 

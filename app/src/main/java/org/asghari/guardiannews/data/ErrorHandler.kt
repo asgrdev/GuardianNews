@@ -1,9 +1,10 @@
 package org.asghari.guardiannews.data
 
-import com.test.moviehub.domain.exceptions.ErrorModel
-import com.test.moviehub.domain.exceptions.IErrorHandler
+
 import kotlinx.coroutines.CancellationException
 import okhttp3.ResponseBody
+import org.asghari.guardiannews.domain.exceptions.ErrorModel
+import org.asghari.guardiannews.domain.exceptions.IErrorHandler
 import retrofit2.HttpException
 import java.io.IOException
 import java.net.SocketTimeoutException

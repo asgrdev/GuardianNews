@@ -3,12 +3,13 @@ package org.asghari.guardiannews.presentation.viewmodels
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.test.moviehub.domain.base.UseCaseCallback
-import com.test.moviehub.domain.exceptions.ErrorModel
+
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.asghari.guardiannews.data.models.news.NewsList
+import org.asghari.guardiannews.domain.base.UseCaseCallback
+import org.asghari.guardiannews.domain.exceptions.ErrorModel
 import org.asghari.guardiannews.domain.usecases.NewsDetailsUseCase
 import org.asghari.guardiannews.other.NewsListState
 import javax.inject.Inject
@@ -24,7 +25,7 @@ class NewsDetailsViewModel @Inject constructor(
     fun getNewsDetails(newsId:String,newsFields:String)
     {
         viewModelScope.launch {
-            newsDetailsUseCase.call(newsId, onResult = object:UseCaseCallback<NewsList>{
+            newsDetailsUseCase.call(newsId, onResult = object: UseCaseCallback<NewsList> {
                 override fun onError(errorModel: ErrorModel?) {
                     _newsDetails.value = NewsListState.Error(errorModel?.message!!+"error", null)
                     newsDetails.value = _newsDetails.value

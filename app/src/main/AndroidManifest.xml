@@ -17,7 +17,7 @@
         android:theme="@style/Theme.GuardianNews"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".presentation.activities.MainActivity2"
+            android:name=".presentation.activities.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.GuardianNews">
             <intent-filter  android:label="@string/app_name">

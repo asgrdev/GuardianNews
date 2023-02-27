@@ -9,6 +9,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.asghari.guardiannews.data.models.news.NewsList
+import org.asghari.guardiannews.domain.base.UseCaseCallback
+import org.asghari.guardiannews.domain.exceptions.ErrorModel
 import org.asghari.guardiannews.domain.usecases.GetSelectedSectionsUseCase
 import org.asghari.guardiannews.domain.usecases.LastNewsListUseCase
 import org.asghari.guardiannews.domain.usecases.SearchInNewsListUseCase
@@ -19,11 +21,11 @@ import javax.inject.Inject
 @HiltViewModel
 class NewsListViewModel @Inject constructor
     (private val lastNewsListUseCase: LastNewsListUseCase
-    , private val searchInNewsListUseCase: SearchInNewsListUseCase
-    ,private val getSelectedSectionsUseCase: GetSelectedSectionsUseCase
+     , private val searchInNewsListUseCase: SearchInNewsListUseCase
+     ,private val getSelectedSectionsUseCase: GetSelectedSectionsUseCase
 ):ViewModel() {
 
-    private val _newsList: MutableSharedFlow<NewsListState> =
+    private val _newsList: MutableStateFlow<NewsListState> =
         MutableStateFlow(NewsListState.Loading("", null))
     val newsList = mutableStateOf<NewsListState>(NewsListState.Loading("", null))
 
@@ -44,25 +46,23 @@ class NewsListViewModel @Inject constructor
         getNewsList()
     }
 
-   fun addSectionToShow( isChecked:Boolean, section:String,searchText:String){
-       if(isChecked) {
-           _SectionsToShow.value.add(section.trim())
-       }
-       else {
-         _SectionsToShow.value.remove(section.trim())
-       }
-       sectionsToShow.value =  _SectionsToShow.value
-       var sectionsString = sectionsToShow.value.toString().replace("[","").replace("]","")
+    fun addSectionToShow( isChecked:Boolean, section:String,searchText:String){
+        if(isChecked) {
+            _SectionsToShow.value.add(section.trim())
+        }
+        else {
+            _SectionsToShow.value.remove(section.trim())
+        }
+        sectionsToShow.value =  _SectionsToShow.value
+        var sectionsString = sectionsToShow.value.toString().replace("[","").replace("]","")
 
-       getNewsList(searchText,sectionsString)
+        getNewsList(searchText,sectionsString)
 
-       Log.d(">>>>>->>", sectionsString)
-   }
+    }
 
     fun getNewsList(query: String = "",sections:String="") {
         current_page = 1
         currentSearchQuery = query
-        Log.d(">>>>>>->",sections)
         viewModelScope.launch {
             _newsList.emit(NewsListState.Loading("", null))
             if (sections.equals("")) {
@@ -76,74 +76,86 @@ class NewsListViewModel @Inject constructor
         }
 
     }
-suspend fun getList(query: String="", fromDataStore:Boolean=false ,sections:String="")
-{
-    var sectionQuery:String = ""
-    if(fromDataStore){
-    if(sections.length>0) {
-        sectionQuery = sections.replace(",", "|")
-        if(sectionQuery.substring(0,1).equals("|")) {
-            sectionQuery = sectionQuery.substring(1)
-        }
-        _SelectedSectionsList.value = (sectionQuery.split("|"))
-        _SectionsToShow.value.clear()
-        _SelectedSectionsList.value.forEach{
-            _SectionsToShow.value.add(it.trim())
-        }
-        sectionsToShow.value =  _SectionsToShow.value
-        selectedSectionsList.value = _SelectedSectionsList.value;
-    }
-    }
-    else{
-        if(sections.length>0) {
-            sectionQuery = sections.replace(",", "|")
-            if(sectionQuery.substring(0,1).equals("|")) {
-                sectionQuery = sectionQuery.substring(1)
-            }
-            _SectionsToShow.value.clear()
-            sectionQuery.split("|").forEach{
-                _SectionsToShow.value.add(it.trim())
+    suspend fun getList(query: String="", fromDataStore:Boolean=false ,sections:String="")
+    {
+        var sectionQuery:String = ""
+        if(fromDataStore){
+            if(sections.length>0) {
+                sectionQuery = sections.replace(",", "|")
+                if(sectionQuery.substring(0,1).equals("|")) {
+                    sectionQuery = sectionQuery.substring(1)
+                }
+                _SelectedSectionsList.value = (sectionQuery.split("|"))
+                _SectionsToShow.value.clear()
+                _SelectedSectionsList.value.forEach{
+                    _SectionsToShow.value.add(it.trim())
+                }
+                sectionsToShow.value =  _SectionsToShow.value
+                selectedSectionsList.value = _SelectedSectionsList.value;
             }
         }
-    }
-    if (query.equals("")) {
-        call = lastNewsListUseCase(sections = sectionQuery)
-    } else {
-        call = searchInNewsListUseCase(query,sectionQuery, current_page);
-    }
-    call?.let {
-        if (it == null) {
-            _newsList.emit(NewsListState.Error("Error!!", null))
-        } else {
-            tmpNewsList = it
-            _newsList.emit(NewsListState.Success("", it))
+        else{
+            if(sections.length>0) {
+                sectionQuery = sections.replace(",", "|")
+                if(sectionQuery.substring(0,1).equals("|")) {
+                    sectionQuery = sectionQuery.substring(1)
+                }
+                _SectionsToShow.value.clear()
+                sectionQuery.split("|").forEach{
+                    _SectionsToShow.value.add(it.trim())
+                }
+            }
+        }
+        if (query.equals("")) {
+            lastNewsListUseCase(sections = sectionQuery, onResult = object : UseCaseCallback<NewsList> {
+                override fun onSuccess(result: NewsList) {
+                    tmpNewsList = result
+                    _newsList.value = (NewsListState.Success("", result))
+                }
 
+                override fun onError(errorModel: ErrorModel?) {
+                    _newsList.value = (NewsListState.Error("Error!!", null))
+                }
+
+            })
+        } else {
+            searchInNewsListUseCase(query,sectionQuery, current_page  , onResult = object : UseCaseCallback<NewsList> {
+                override fun onSuccess(result: NewsList) {
+                    tmpNewsList = result
+                    _newsList.value = (NewsListState.Success("", result))
+
+                }
+
+                override fun onError(errorModel: ErrorModel?) {
+                    _newsList.value = (NewsListState.Error("Error!!", null))
+                }
+
+            });
         }
+
         _newsList.collectLatest {
             newsList.value = it
         }
-
     }
-}
 
     fun LoadMore(query: String = "",sections:String="") {
         current_page++
         currentSearchQuery = query
-         viewModelScope.launch {
+        viewModelScope.launch {
             _newsList.emit(NewsListState.Loading("", tmpNewsList))
-             if (sections.equals("")) {
-                 getSelectedSectionsUseCase().collect {
-                     getLoadMoreList(query,true, it)
-                 }
-             } else {
-                 getLoadMoreList(query,false, sections)
+            if (sections.equals("")) {
+                getSelectedSectionsUseCase().collect {
+                    getLoadMoreList(query,true, it)
+                }
+            } else {
+                getLoadMoreList(query,false, sections)
 
-             }
+            }
         }
 
     }
 
-   suspend fun getLoadMoreList(query: String = "" , fromDataStore:Boolean=false,sections:String="")
+    suspend fun getLoadMoreList(query: String = "" , fromDataStore:Boolean=false,sections:String="")
     {
         var sectionQuery:String = ""
         if(fromDataStore){
@@ -175,22 +187,38 @@ suspend fun getList(query: String="", fromDataStore:Boolean=false ,sections:Stri
 
             }
         }
-        if (query.equals("")) {
-            call = lastNewsListUseCase(current_page,sectionQuery);
-        } else {
-            call = searchInNewsListUseCase(query,sectionQuery, current_page);
-        }
-        call?.let {
 
-            try {
-                tmpNewsList?.let { tmpedNewsList ->
-                    tmpedNewsList.response.results += it.response.results
-                    _newsList.emit(NewsListState.Success("", tmpedNewsList))
+
+        if (query.equals("")) {
+            lastNewsListUseCase(current_page,sections = sectionQuery, onResult = object : UseCaseCallback<NewsList> {
+                override fun onSuccess(result: NewsList) {
+                    tmpNewsList?.let { tmpedNewsList ->
+                        tmpedNewsList.response.results += result.response.results
+                        _newsList.value = (NewsListState.Success("", tmpedNewsList))
+                    }
                 }
-            } catch (e: HttpException) {
-                _newsList.emit(NewsListState.Error("Error!!", null))
-            }
+
+                override fun onError(errorModel: ErrorModel?) {
+                    _newsList.value = (NewsListState.Error("Error!!", null))
+                }
+
+            })
+        } else {
+            searchInNewsListUseCase(query,sectionQuery, current_page  , onResult = object : UseCaseCallback<NewsList> {
+                override fun onSuccess(result: NewsList) {
+                    tmpNewsList?.let { tmpedNewsList ->
+                        tmpedNewsList.response.results += result.response.results
+                        _newsList.value = (NewsListState.Success("", tmpedNewsList))
+                    }
+                }
+
+                override fun onError(errorModel: ErrorModel?) {
+                    _newsList.value = (NewsListState.Error("Error!!", null))
+                }
+
+            });
         }
+
         _newsList.collectLatest {
             newsList.value = it
         }

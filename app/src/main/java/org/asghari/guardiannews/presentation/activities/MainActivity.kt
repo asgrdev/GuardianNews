@@ -41,7 +41,7 @@ import org.asghari.guardiannews.R
 import org.asghari.guardiannews.other.ScreensRoute
 
 @AndroidEntryPoint
-class MainActivity2 : ComponentActivity() {
+class MainActivity : ComponentActivity() {
     @Composable
     fun SearchView(state: MutableState<TextFieldValue>) {
 
