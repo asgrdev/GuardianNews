@@ -22,13 +22,17 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination =  ScreensRoute.HomePage().route
+        startDestination =  ScreensRoute.SplashScreen().route
     ) {
         composable(ScreensRoute.HomePage().route) {
-          HomePageScreen(searchState) {
-              val encodedUrl = URLEncoder.encode(it, StandardCharsets.UTF_8.toString())
-              navController.navigate( "${ScreensRoute.NewsScreen().route}/$encodedUrl")
-          }
+            HomePageScreen(searchState) {
+                val encodedUrl = URLEncoder.encode(it, StandardCharsets.UTF_8.toString())
+                navController.navigate( "${ScreensRoute.NewsScreen().route}/$encodedUrl")
+            }
+        }
+
+        composable(ScreensRoute.SplashScreen().route) {
+            SplashScreen(navController)
         }
 
         composable("${ScreensRoute.NewsScreen().route}/{newsId}",

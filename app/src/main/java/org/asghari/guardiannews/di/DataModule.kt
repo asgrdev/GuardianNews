@@ -50,7 +50,6 @@ class DataModule {
         return LocalDataSourceImpl(appContext = context)
     }
 
-
     @Provides
     @Singleton
     fun provideSettingsRepository(localDataSource: LocalDataSource):SettingsRepository{
@@ -61,7 +60,6 @@ class DataModule {
     fun provideRemoteDataSource(guardianNewsApiService: GuardianNewsApiService, sectionsApiService: SectionsApiService):RemoteDataSource{
         return RemoteDataSourceImp(guardianNewsApiService, sectionsApiService)
     }
-
 
     @Singleton
     @Provides

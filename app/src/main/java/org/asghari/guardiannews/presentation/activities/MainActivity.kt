@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.*
+import androidx.navigation.compose.currentBackStackEntryAsState
 import org.asghari.guardiannews.R
 import org.asghari.guardiannews.other.ScreensRoute
 
@@ -163,80 +164,93 @@ class MainActivity : ComponentActivity() {
 
             var dropDownMenuExpanded = remember { mutableStateOf(false) }
             val navController = rememberNavController()
+            val navControllerState by navController.currentBackStackEntryAsState()
             var text = remember { mutableStateOf(TextFieldValue("")) }
             var pagename = remember {
                 mutableStateOf(getResources().getString(R.string.app_name))
             }
+            var showTopBar = when(navControllerState?.destination?.route){
+                ScreensRoute.SplashScreen().route -> false
+                else -> true
+            }
             GuardianNewsTheme {
-              Scaffold( topBar = {
-                  TopAppBar(
-
-                      backgroundColor = Color.LightGray,
-                      title = {
-                          Text(text = pagename.value, style = TextStyle(color = Color.White))
-                      },
-                      actions = {
-
-
-                          // drop down menu
-                          DropdownMenu(
-                              expanded = dropDownMenuExpanded.value,
-                              onDismissRequest = {
-                                  dropDownMenuExpanded.value =  false
+              Scaffold(
+                  topBar = {
+                      if (showTopBar) {
+                          TopAppBar(
+                              backgroundColor = Color.LightGray,
+                              title = {
+                                  Text(
+                                      text = pagename.value,
+                                      style = TextStyle(color = Color.White)
+                                  )
                               },
-                              // play around with these values
-                              // to position the menu properly
-                              offset = DpOffset(x = -15.dp, y = (-50).dp)
-                          ) {
-                              // this is a column scope
-                              // items are added vertically
+                              actions = {
 
-                              DropdownMenuItem(onClick = {
-                                  navController.navigate(ScreensRoute.SectionsScreen().route)
-                                  dropDownMenuExpanded.value = false
-                              }) {
-                                  Text("Sections")
+
+                                  // drop down menu
+                                  DropdownMenu(
+                                      expanded = dropDownMenuExpanded.value,
+                                      onDismissRequest = {
+                                          dropDownMenuExpanded.value = false
+                                      },
+                                      // play around with these values
+                                      // to position the menu properly
+                                      offset = DpOffset(x = -15.dp, y = (-50).dp)
+                                  ) {
+                                      // this is a column scope
+                                      // items are added vertically
+
+                                      DropdownMenuItem(onClick = {
+                                          navController.navigate(ScreensRoute.SectionsScreen().route)
+                                          dropDownMenuExpanded.value = false
+                                      }) {
+                                          Text("Sections")
+                                      }
+
+                                      DropdownMenuItem(onClick = {
+                                          Toast.makeText(
+                                              applicationContext,
+                                              "Settings Click",
+                                              Toast.LENGTH_SHORT
+                                          )
+                                              .show()
+                                          dropDownMenuExpanded.value = false
+                                      }) {
+                                          Text("Settings")
+                                      }
+
+                                      DropdownMenuItem(onClick = {
+                                          Toast.makeText(
+                                              applicationContext,
+                                              "Send Feedback Click",
+                                              Toast.LENGTH_SHORT
+                                          )
+                                              .show()
+                                          dropDownMenuExpanded.value = false
+                                      }) {
+                                          Text("Send Feedback")
+                                      }
+                                  }
+                                  Box(
+                                      modifier = Modifier
+                                          .padding(1.dp, 2.dp)
+                                          .height(45.dp)
+                                  ) {
+                                      SearchView(state = text)
+                                  }
+                                  IconButton(
+
+                                      content =
+                                      { Icon(Icons.Outlined.Menu, contentDescription = "") },
+                                      onClick = {
+                                          dropDownMenuExpanded.value = !dropDownMenuExpanded.value
+                                      })
+
                               }
 
-                              DropdownMenuItem(onClick = {
-                                  Toast.makeText(
-                                      applicationContext,
-                                      "Settings Click",
-                                      Toast.LENGTH_SHORT
-                                  )
-                                      .show()
-                                  dropDownMenuExpanded.value = false
-                              }) {
-                                  Text("Settings")
-                              }
-
-                              DropdownMenuItem(onClick = {
-                                  Toast.makeText(
-                                      applicationContext,
-                                      "Send Feedback Click",
-                                      Toast.LENGTH_SHORT
-                                  )
-                                      .show()
-                                  dropDownMenuExpanded.value = false
-                              }) {
-                                  Text("Send Feedback")
-                              }
-                          }
-                              Box(modifier = Modifier
-                                  .padding(1.dp, 2.dp)
-                                  .height(45.dp)) {
-                                  SearchView(state = text)
-                              }
-                              IconButton(
-
-                                  content =
-                                  { Icon(Icons.Outlined.Menu,    contentDescription = "")}, onClick = {
-                                      dropDownMenuExpanded.value = !dropDownMenuExpanded.value
-                                  })
-
+                          )
                       }
-
-                  )
               },
               content =  {
                   Column(
