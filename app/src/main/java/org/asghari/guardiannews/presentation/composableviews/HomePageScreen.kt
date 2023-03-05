@@ -305,6 +305,6 @@ Column(modifier = Modifier.align(Alignment.TopStart)) {
     }
 }
     }
-    }
+}
 
 

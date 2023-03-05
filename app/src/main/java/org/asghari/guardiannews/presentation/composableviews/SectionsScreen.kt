@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import org.asghari.guardiannews.other.Loading
 import org.asghari.guardiannews.other.SectionsState
 import org.asghari.guardiannews.presentation.ui.RoundedCheckView
 import org.asghari.guardiannews.presentation.viewmodels.SectionsViewModel
@@ -54,7 +55,13 @@ fun SectionsScreen() {
         )
         when (sections) {
             is SectionsState.Loading -> {
-                Text(text = "loading!!!")
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Loading()
+                }
             }
             is SectionsState.Error -> {
                 Text(text = "Error: ${sections.message}")

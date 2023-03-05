@@ -58,9 +58,7 @@ fun NewsScreen(name: String?,navController: NavController) {
 
             Column(
                 modifier = Modifier.verticalScroll(scrollState )
-                /* modifier = Modifier.clickable(onClick = {
-                        Log.d(">>>>", news.webTitle)
-                    })*/
+
             ) {
                 Text(
                     text = news.webTitle, color = Color.DarkGray,

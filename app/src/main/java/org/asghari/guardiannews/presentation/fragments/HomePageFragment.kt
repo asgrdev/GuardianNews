@@ -62,7 +62,7 @@ class HomePageFragment:Fragment(),NewsListAdapter.ItemClickListener {
 
 
         lifecycleScope.launch {
-            //repeatOnLifecycle(Lifecycle.State.STARTED) {
+
                 newsListAdapter.loadStateFlow.collect {
                     binding.prependProgress.isVisible = it.source.prepend is LoadState.Loading
                     binding.appendProgress.isVisible = it.source.append is LoadState.Loading
@@ -72,28 +72,8 @@ class HomePageFragment:Fragment(),NewsListAdapter.ItemClickListener {
 
 
                 }
-          //  }
+
         }
-        /*_viewModel.newsList.observe(viewLifecycleOwner,{
-            if(it.isLoading)
-            {
-                Toast.makeText(context,"Data is loading!!",Toast.LENGTH_LONG).show()
-            }
-            else if(it.error.length>1)
-            {
-                Toast.makeText(context,it.error,Toast.LENGTH_SHORT).show()
-            }
-            else {
-                lifecycleScope.launch {
-                    /*it.pagingData?.let {
-                        newsListAdapter.submitData(
-                            pagingData = it
-                        )
-                    }*/
-                }
-                Log.d("88884>>>>>>>>>>>>", it.data.toString())
-            }
-        })*/
 
 
     }
