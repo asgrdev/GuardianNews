@@ -25,4 +25,4 @@ Technologies and libraries:
 - Material Design
 
 
-contact info :<a href="mailto:asghari.a68@gmail.com?">asghari.a68@gmail.com</a>
+contact info : <a href="mailto:asghari.a68@gmail.com?">asghari.a68@gmail.com</a>
